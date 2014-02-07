@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Kido TV</string>
+    <string name="image_splash_description">splash</string>
+    <string name="image_start_button">image_start_button</string>
+    <string name="start_menu_bg_image">start_menu_bg_image</string>
+    <string name="google_button">google_button</string>
+    <string name="rate_button">rate_button</string>
+    <string name="facebook_button">facebook_button</string>
+    <string name="image_settings_button">image_settings_button</string>
+    <string name="image_lock">image_lock</string>
+    <string name="image_fx">image_fx</string>
+    <string name="image_volume">image_volume</string>
+    <string name="back_button_img">back_button_image</string>
+    <string name="image_icon_left">image_icon_left</string>
+    <string name="image_icon_right">image_icon_right</string>
+    <string name="video_thumb_image">video_thumb_image</string>
+
+</resources>

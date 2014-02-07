@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.path="$MODULE_DIR$/MpAgencjaKidoTv" external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" external.system.module.group="MpAgencjaKidoTv-Project" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="android" name="Android">
+      <configuration>
+        <option name="SELECTED_BUILD_VARIANT" value="flavor1Debug" />
+        <option name="ASSEMBLE_TASK_NAME" value="assembleFlavor1Debug" />
+        <option name="COMPILE_JAVA_TASK_NAME" value="compileFlavor1DebugJava" />
+        <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleFlavor1DebugTest" />
+        <option name="SOURCE_GEN_TASK_NAME" value="generateFlavor1DebugSources" />
+        <option name="ALLOW_USER_CONFIGURATION" value="false" />
+        <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
+        <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
+        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/MpAgencjaKidoTv/src/main/res" />
+        <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
+      </configuration>
+    </facet>
+    <facet type="android-gradle" name="Android-Gradle">
+      <configuration>
+        <option name="GRADLE_PROJECT_PATH" value=":MpAgencjaKidoTv" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/classes/flavor1/debug" />
+    <output-test url="file://$MODULE_DIR$/build/classes/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/MpAgencjaKidoTv">
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/source/r/flavor1/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/source/aidl/flavor1/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/source/buildConfig/flavor1/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/source/rs/flavor1/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/res/rs/flavor1/debug" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1Debug/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1Debug/assets" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1Debug/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1Debug/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1Debug/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1Debug/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1Debug/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/source/r/test/flavor1/debug" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/source/aidl/test/flavor1/debug" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/source/buildConfig/test/flavor1/debug" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/source/rs/test/flavor1/debug" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/res/rs/test/flavor1/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1/assets" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/flavor1/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTestFlavor1/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTestFlavor1/assets" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTestFlavor1/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTestFlavor1/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTestFlavor1/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTestFlavor1/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTestFlavor1/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/debug/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/debug/assets" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/debug/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/debug/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/debug/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/debug/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/debug/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/main/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/main/assets" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/main/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/main/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/main/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTest/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTest/assets" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTest/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTest/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTest/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTest/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/src/instrumentTest/resources" type="java-test-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/apk" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/assets" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/bundles" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/dependency-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/incremental" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/libs" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/manifests" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/res" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/symbols" />
+      <excludeFolder url="file://$MODULE_DIR$/MpAgencjaKidoTv/build/tmp" />
+    </content>
+    <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="YouTubeAndroidPlayerApi" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-19.0.0" level="project" />
+  </component>
+</module>
+

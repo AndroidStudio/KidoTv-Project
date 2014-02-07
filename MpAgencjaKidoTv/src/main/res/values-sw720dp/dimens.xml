@@ -1,0 +1,7 @@
+<resources>
+    <dimen name="start_button_margin_bottom">80dp</dimen>
+    <dimen name="start_button_margin_top">100dp</dimen>
+    <dimen name="start_center_menu_buttons">10dp</dimen>
+    <dimen name="right_menu_buttons_margin">10dip</dimen>
+    <dimen name="thumbial_image_padding">45dp</dimen>
+</resources>

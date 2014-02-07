@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/start"
+        android:contentDescription="@string/start_menu_bg_image"/>
+
+    <include layout="@layout/right_menu"/>
+
+    <ImageView
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:src="@drawable/start_menu_tv"
+        android:contentDescription="@string/start_menu_bg_image"/>
+
+    <RelativeLayout
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_centerHorizontal="true"
+            android:id="@+id/btnStart"
+            android:layout_marginTop="@dimen/start_button_margin_top"
+            android:layout_marginBottom="@dimen/start_button_margin_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/start_button"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/image_start_button"/>
+
+        <ImageButton
+            android:padding="@dimen/start_center_menu_buttons"
+            android:layout_below="@+id/btnStart"
+            android:id="@+id/btnGoogle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/start_google_button"
+            android:background="@null"
+            android:contentDescription="@string/google_button"/>
+
+        <ImageButton
+            android:padding="@dimen/start_center_menu_buttons"
+            android:layout_below="@+id/btnStart"
+            android:layout_toRightOf="@+id/btnGoogle"
+            android:id="@+id/btnRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/start_rate_button"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/rate_button"/>
+
+        <ImageButton
+            android:padding="@dimen/start_center_menu_buttons"
+            android:layout_below="@+id/btnStart"
+            android:layout_toRightOf="@+id/btnRate"
+            android:id="@+id/btnFacebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/start_facebook_button"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/facebook_button"/>
+    </RelativeLayout>
+</RelativeLayout>

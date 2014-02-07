@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+    <ImageView
+        android:paddingLeft="@dimen/thumbial_image_padding"
+        android:paddingRight="@dimen/thumbial_image_padding"
+        android:id="@+id/video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/video_thumb"
+        android:contentDescription="@string/video_thumb_image"/>
+
+    <ProgressBar
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textColor="#fff"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/title_thumb"
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+
+</RelativeLayout>
