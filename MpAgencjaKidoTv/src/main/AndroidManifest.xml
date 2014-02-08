@@ -35,6 +35,15 @@
             android:name=".main.PlayListScene"
             android:screenOrientation="landscape"
             android:theme="@style/Theme"/>
+        <activity
+            android:name=".main.YouTubePlayerScene"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme"/>
+
+        <activity
+            android:name=".main.YoutubeOverLayScene"
+            android:screenOrientation="landscape"
+            android:theme="@style/ThemeOverLayYoutube"/>
     </application>
 
 </manifest>

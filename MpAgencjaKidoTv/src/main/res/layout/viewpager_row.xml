@@ -9,7 +9,7 @@
     <GridView
         android:layout_centerHorizontal="true"
         android:id="@+id/gredView"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/gridView_width"
         android:layout_height="wrap_content"
         android:numColumns="2"
         android:gravity="center"

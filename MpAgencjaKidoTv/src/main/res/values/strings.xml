@@ -16,5 +16,7 @@
     <string name="image_icon_left">image_icon_left</string>
     <string name="image_icon_right">image_icon_right</string>
     <string name="video_thumb_image">video_thumb_image</string>
+    <string name="error_player">Youtube player error</string>
+    <string name="time">00:00</string>
 
 </resources>

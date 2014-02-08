@@ -4,4 +4,6 @@
     <dimen name="start_center_menu_buttons">10dp</dimen>
     <dimen name="right_menu_buttons_margin">10dip</dimen>
     <dimen name="thumbial_image_padding">45dp</dimen>
+    <dimen name="gridView_width">850dp</dimen>
+    <dimen name="progres_bar_gridView_item_margin">80dp</dimen>
 </resources>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:id="@+id/mainLayout">
+
+
+    <ImageButton
+        android:layout_margin="5dp"
+        android:background="@android:color/transparent"
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/back_icon"
+        android:contentDescription="@string/back_button_img"/>
+
+    <include layout="@layout/right_menu"/>
+
+    <Button
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnPlay"
+        android:layout_centerInParent="true"
+        android:background="@drawable/btn_play_icon"/>
+
+    <Button
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnPause"
+        android:layout_centerInParent="true"
+        android:background="@drawable/btn_pause_icon"/>
+
+    <SeekBar
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"/>
+
+    <TextView
+        android:layout_margin="2dp"
+        android:id="@+id/currentTime"
+        android:layout_toLeftOf="@+id/endTime"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/time"/>
+
+    <TextView
+        android:layout_margin="2dp"
+        android:id="@+id/endTime"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/time"/>
+</RelativeLayout>

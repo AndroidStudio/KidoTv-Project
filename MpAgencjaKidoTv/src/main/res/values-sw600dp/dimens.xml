@@ -5,4 +5,6 @@
     <dimen name="right_menu_buttons_margin">7dip</dimen>
     <dimen name="right_manu_margin">7dip</dimen>
     <dimen name="thumbial_image_padding">35dp</dimen>
+    <dimen name="gridView_width">650dp</dimen>
+    <dimen name="progres_bar_gridView_item_margin">50dp</dimen>
 </resources>

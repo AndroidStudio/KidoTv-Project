@@ -37,6 +37,7 @@ import mp.agencja.apsik.kidotv.R;
 public class PlayListScene extends Activity {
     private final static String TAG_LOG = "PlayListScene";
     private final static String kido_play_list_url = "http://androidstudio.pl/kidotv/kido_play_list.json";
+    private static boolean needUpdate = true;
     private ViewPagerParallax viewPager;
     private DownloadPlayListTask downloadPlayListTask;
     private ProgressBar progressBar;
@@ -82,15 +83,20 @@ public class PlayListScene extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (downloadPlayListTask != null) {
-            AsyncTask.Status diStatus = downloadPlayListTask.getStatus();
-            if (diStatus != AsyncTask.Status.FINISHED) {
-                return;
+        if (needUpdate) {
+            if (downloadPlayListTask != null) {
+                AsyncTask.Status diStatus = downloadPlayListTask.getStatus();
+                if (diStatus != AsyncTask.Status.FINISHED) {
+                    return;
+                }
             }
+            downloadPlayListTask = new DownloadPlayListTask();
+            downloadPlayListTask.execute(kido_play_list_url);
         }
-        downloadPlayListTask = new DownloadPlayListTask();
-        downloadPlayListTask.execute(kido_play_list_url);
+    }
 
+    public static void needUpdate(boolean update) {
+        needUpdate = update;
     }
 
     private class DownloadPlayListTask extends AsyncTask<String, String, Boolean> {
@@ -127,17 +133,19 @@ public class PlayListScene extends Activity {
                         final JSONObject jsonObject = new JSONObject(sb.toString());
                         final JSONArray jsonArray = jsonObject.getJSONArray("KidoTvPlayList");
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            final JSONObject jsonRow = jsonArray.getJSONObject(i);
+                            if (!isCancelled()) {
+                                final JSONObject jsonRow = jsonArray.getJSONObject(i);
 
-                            HashMap<String, String> map;
-                            map = getPlayListThumb(jsonRow.getString("PlayList"));
-                            if (map == null) return false;
-                            map.put("play_list_id", jsonRow.getString("PlayList"));
+                                HashMap<String, String> map;
+                                map = getPlayListThumb(jsonRow.getString("PlayList"));
+                                if (map == null) return false;
+                                map.put("play_list_id", jsonRow.getString("PlayList"));
 
-                            kidoPlayList.add(map);
-                            if ((i + 1) % 4 == 0 || i == jsonArray.length() - 1) {
-                                mainKidoList.add(kidoPlayList);
-                                kidoPlayList = new ArrayList<HashMap<String, String>>(4);
+                                kidoPlayList.add(map);
+                                if ((i + 1) % 4 == 0 || i == jsonArray.length() - 1) {
+                                    mainKidoList.add(kidoPlayList);
+                                    kidoPlayList = new ArrayList<HashMap<String, String>>(4);
+                                }
                             }
                         }
                         br.close();
@@ -196,7 +204,7 @@ public class PlayListScene extends Activity {
                         hasMap.put("title", title.getString("$t"));
                         hasMap.put("url", jsonRow.getString("url"));
 
-                        //Log.e(TAG_LOG, "size:"+ mediaThumbial.length());
+                        Log.e(TAG_LOG, "size:" + mediaThumbial.length());
                         br.close();
                     } catch (Exception e) {
                         Log.e(TAG_LOG, e.getMessage());
@@ -251,8 +259,10 @@ public class PlayListScene extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        needUpdate(true);
         if (downloadPlayListTask != null) {
             downloadPlayListTask.cancel(true);
+            downloadPlayListTask = null;
         }
 
     }

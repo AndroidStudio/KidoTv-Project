@@ -2,10 +2,12 @@ package mp.agencja.apsik.kidotv.main;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -50,30 +52,40 @@ class ViewPagerAdapter extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
-
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        View view = inflater.inflate(R.layout.viewpager_row, null);
+        final View view = inflater.inflate(R.layout.viewpager_row, null);
         if (view != null) {
-            GridView gridView = (GridView) view.findViewById(R.id.gredView);
-            List<HashMap<String, String>> list = mainKidoList.get(position);
-            GridViewAdapter gridViewAdapter = new GridViewAdapter(list);
+            final GridView gridView = (GridView) view.findViewById(R.id.gredView);
+            final List<HashMap<String, String>> list = mainKidoList.get(position);
+            final GridViewAdapter gridViewAdapter = new GridViewAdapter(list);
             gridView.setAdapter(gridViewAdapter);
-
+            gridView.setOnItemClickListener(onGridItemClickListener);
             container.addView(view);
         }
         return view;
     }
 
+    private final GridView.OnItemClickListener onGridItemClickListener = new GridView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            final Context context = view.getContext();
+            if (context != null) {
+                final String playListId = view.getTag().toString();
+                final Intent intent = new Intent(context, YouTubePlayerScene.class);
+                intent.putExtra("playListId", playListId);
+                context.startActivity(intent);
+            }
+        }
+    };
+
     public class GridViewAdapter extends BaseAdapter {
         private final List<HashMap<String, String>> list;
 
-
         public GridViewAdapter(List<HashMap<String, String>> list) {
             this.list = list;
-
         }
 
         @Override
@@ -93,15 +105,17 @@ class ViewPagerAdapter extends PagerAdapter {
 
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup) {
-            View view = inflater.inflate(R.layout.gridview_item, viewGroup, false);
+            final View view;
+            view = inflater.inflate(R.layout.gridview_item, viewGroup, false);
             if (view != null) {
-                TextView tvTitle = (TextView) view.findViewById(R.id.title);
-                tvTitle.setMaxWidth(tvTitle.getWidth());
-                ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-                ImageView imageView = (ImageView) view.findViewById(R.id.video);
-                HashMap<String, String> map = list.get(position);
+                final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+                final ImageView imageView = (ImageView) view.findViewById(R.id.video);
+                final HashMap<String, String> map = list.get(position);
+                final TextView textViewTitle = (TextView) view.findViewById(R.id.title);
+                textViewTitle.setMaxWidth(textViewTitle.getWidth());
                 cache.loadBitmap(map.get("url"), imageView, progressBar, GridViewAdapter.this);
-                tvTitle.setText(map.get("title"));
+                textViewTitle.setText(map.get("title"));
+                view.setTag(map.get("play_list_id"));
             }
             return view;
         }
