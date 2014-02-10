@@ -63,6 +63,7 @@ public class YoutubeOverLayScene extends Activity {
         seekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
 
         currentTimeTv = (TextView) findViewById(R.id.currentTime);
+        currentTimeTv.setText("00:00 /");
         endTime = (TextView) findViewById(R.id.endTime);
 
     }
@@ -177,13 +178,13 @@ public class YoutubeOverLayScene extends Activity {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             YouTubePlayerScene.youtubePlayer.play();
             btnPlay.setVisibility(View.INVISIBLE);
-            allowShowingPause(true);
+            allowShowingPause();
             return false;
         }
     };
 
-    private void allowShowingPause(boolean b) {
-        allowShowing = b;
+    private void allowShowingPause() {
+        allowShowing = true;
     }
 
 
@@ -209,16 +210,16 @@ public class YoutubeOverLayScene extends Activity {
         public void run() {
             int currentTime = YouTubePlayerScene.youtubePlayer.getDurationMillis();
             int duration = YouTubePlayerScene.youtubePlayer.getCurrentTimeMillis();
-            currentTimeTv.setText(getDate(duration, "mm:ss") + " /");
-            endTime.setText(getDate(currentTime, "mm:ss"));
+            currentTimeTv.setText(getDate(duration) + " /");
+            endTime.setText(getDate(currentTime));
             seekBar.setMax(currentTime / 1000);
             seekBar.setProgress(duration / 1000);
             handler.postDelayed(runnable, 1000);
         }
     };
 
-    public static String getDate(long milliSeconds, String dateFormat) {
-        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+    private static String getDate(long milliSeconds) {
+        SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
@@ -264,8 +265,4 @@ public class YoutubeOverLayScene extends Activity {
         handler.removeCallbacks(runnable);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
 }

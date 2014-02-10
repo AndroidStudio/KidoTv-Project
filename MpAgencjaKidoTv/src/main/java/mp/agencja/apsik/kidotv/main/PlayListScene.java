@@ -2,6 +2,7 @@ package mp.agencja.apsik.kidotv.main;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -28,6 +30,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +53,8 @@ public class PlayListScene extends Activity {
     private ImageButton btnRight;
     private ImageButton btndisplayAllPlayLists;
     private boolean lock;
+    private boolean accesToFavorites = false;
+    private List<List<HashMap<String, String>>> mainKidoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,11 +105,11 @@ public class PlayListScene extends Activity {
         needUpdate = update;
     }
 
-    private class DownloadPlayListTask extends AsyncTask<String, String, Boolean> {
+    private class DownloadPlayListTask extends AsyncTask<String, Integer, Boolean> {
 
         private final HttpClient httpClient = CustomHttpClient.getHttpClient();
         private List<HashMap<String, String>> kidoPlayList;
-        private List<List<HashMap<String, String>>> mainKidoList;
+
 
         @Override
         protected void onPreExecute() {
@@ -140,7 +146,7 @@ public class PlayListScene extends Activity {
                                 map = getPlayListThumb(jsonRow.getString("PlayList"));
                                 if (map == null) return false;
                                 map.put("play_list_id", jsonRow.getString("PlayList"));
-
+                                publishProgress(i, jsonArray.length() - 1);
                                 kidoPlayList.add(map);
                                 if ((i + 1) % 4 == 0 || i == jsonArray.length() - 1) {
                                     mainKidoList.add(kidoPlayList);
@@ -204,7 +210,6 @@ public class PlayListScene extends Activity {
                         hasMap.put("title", title.getString("$t"));
                         hasMap.put("url", jsonRow.getString("url"));
 
-                        Log.e(TAG_LOG, "size:" + mediaThumbial.length());
                         br.close();
                     } catch (Exception e) {
                         Log.e(TAG_LOG, e.getMessage());
@@ -224,9 +229,22 @@ public class PlayListScene extends Activity {
         }
 
         @Override
+        protected void onProgressUpdate(Integer... progress) {
+            double p1 = progress[0];
+            double p2 = progress[1];
+            double x = p1 * 100 / p2;
+            DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+            decimalFormatSymbols.setDecimalSeparator('.');
+            decimalFormatSymbols.setGroupingSeparator(',');
+            DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", decimalFormatSymbols);
+            ((TextView) findViewById(R.id.progresTextView)).setText(decimalFormat.format(x) + "%");
+        }
+
+        @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (result) {
+                accesToFavorites = true;
                 progressBar.setVisibility(View.INVISIBLE);
                 viewPager.setVisibility(View.VISIBLE);
                 ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(PlayListScene.this, mainKidoList);
@@ -375,8 +393,9 @@ public class PlayListScene extends Activity {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 scaleAnimation(1f, 0.75f, view, "none");
+
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                scaleAnimation(0.75f, 1f, view, "none");
+                scaleAnimation(0.75f, 1f, view, "favorites");
             }
             return false;
         }
@@ -394,13 +413,13 @@ public class PlayListScene extends Activity {
                 if (action.equals("left")) {
                     int currentItem = viewPager.getCurrentItem();
                     if (currentItem > 0) {
-                        viewPager.setCurrentItem(currentItem - 1);
+                        viewPager.setCurrentItem(currentItem - 1, true);
                     }
                     Log.i("", "currentItem: " + viewPager.getCurrentItem());
                 } else if (action.equals("right")) {
                     int currentItem = viewPager.getCurrentItem();
                     if (currentItem != viewPager.getMaxPages() - 1) {
-                        viewPager.setCurrentItem(currentItem + 1);
+                        viewPager.setCurrentItem(currentItem + 1, true);
                     }
                     Log.i("", "currentItem: " + viewPager.getCurrentItem());
                 }
@@ -412,6 +431,18 @@ public class PlayListScene extends Activity {
             public void onAnimationEnd(Animation anim) {
                 if (action.equals("back")) {
                     finish();
+                } else if (action.equals("favorites")) {
+                    if (accesToFavorites) {
+                        final ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+                        for (List<HashMap<String, String>> arraylist : mainKidoList) {
+                            for (HashMap<String, String> map : arraylist) {
+                                list.add(map);
+                            }
+                        }
+                        Intent intent = new Intent(PlayListScene.this, FavoritePlayListScene.class);
+                        intent.putExtra("list", list);
+                        startActivity(intent);
+                    }
                 }
             }
         });

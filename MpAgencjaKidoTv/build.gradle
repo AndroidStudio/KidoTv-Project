@@ -27,8 +27,9 @@ android {
 }
 
 dependencies {
-    //    compile 'com.google.android.gms:play-services:4.0.30'
-        compile 'com.android.support:support-v4:19.0.0'
+    compile 'com.google.android.gms:play-services:4.0.30'
+    compile 'com.android.support:support-v4:19.0.0'
+    //
     //    compile project(':libs:facebook')
-        compile files('youtube_lib/YouTubeAndroidPlayerApi.jar')
+    compile files('youtube_lib/YouTubeAndroidPlayerApi.jar')
 }

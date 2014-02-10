@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/favorites_scene_bg"
+        android:contentDescription="@string/start_menu_bg_image"/>
+
+    <ImageView
+        android:id="@+id/headerview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/header_view_icon"
+        android:contentDescription="@string/start_menu_bg_image"/>
+
+    <ListView
+        android:cacheColorHint="#fff"
+        android:divider="@color/custom"
+        android:dividerHeight="1px"
+        android:id="@+id/listView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"/>
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/listView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/list_shadow"
+        android:contentDescription="@string/shadow"/>
+
+    <LinearLayout
+        android:layout_below="@id/listView"
+        android:layout_marginTop="7dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true">
+
+        <ImageButton
+            android:id="@+id/showAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search_icon"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/search_icon"/>
+
+        <ImageButton
+            android:id="@+id/favorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/all_favorites_icon"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/favorites_icon"/>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:layout_margin="5dp"
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/back_icon"
+        android:contentDescription="@string/back_button_img"/>
+</RelativeLayout>

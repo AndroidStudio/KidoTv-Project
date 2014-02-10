@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <dimen name="start_button_margin_bottom">40dp</dimen>
     <dimen name="start_button_margin_top">50dp</dimen>
     <dimen name="start_center_menu_buttons">5dp</dimen>
@@ -7,4 +9,7 @@
     <dimen name="thumbial_image_padding">25dp</dimen>
     <dimen name="gridView_width">400dp</dimen>
     <dimen name="progres_bar_gridView_item_margin">25dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
 </resources>

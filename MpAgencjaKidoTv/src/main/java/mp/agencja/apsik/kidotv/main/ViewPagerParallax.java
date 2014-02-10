@@ -8,10 +8,14 @@ import android.graphics.Rect;
 import android.os.Debug;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.Scroller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
 import mp.agencja.apsik.kidotv.R;
 
@@ -31,13 +35,35 @@ public class ViewPagerParallax extends ViewPager {
     private final Rect src = new Rect();
     private final Rect dst = new Rect();
 
+
     public ViewPagerParallax(Context context) {
         super(context);
+
+    }
+
+    public class CustomScroller extends Scroller {
+        public CustomScroller(Context context) {
+            super(context, new DecelerateInterpolator());
+        }
+
+        @Override
+        public void startScroll(int startX, int startY, int dx, int dy, int duration) {
+            super.startScroll(startX, startY, dx, dy, 600);
+        }
     }
 
     public ViewPagerParallax(Context context, AttributeSet attrs) {
         super(context, attrs);
+        try {
+            Class<?> viewpager = ViewPager.class;
+            Field scroller = viewpager.getDeclaredField("mScroller");
+            scroller.setAccessible(true);
+            scroller.set(this, new CustomScroller(context));
+        } catch (Exception e) {
+            Log.e("CustomScroller", e.getMessage());
+        }
     }
+
 
     private void set_new_background() {
         if (background_id == -1)
@@ -133,7 +159,7 @@ public class ViewPagerParallax extends ViewPager {
     }
 
     public void setMaxPages(int pages) {
-        max_num_pages = pages;
+        this.max_num_pages = pages;
         set_new_background();
     }
 

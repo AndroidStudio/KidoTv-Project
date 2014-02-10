@@ -25,7 +25,7 @@ import com.google.android.youtube.player.YouTubePlayer;
 
 import mp.agencja.apsik.kidotv.R;
 
-public abstract class YouTubeFailureRecoveryActivity extends YouTubeBaseActivity implements
+abstract class YouTubeFailureRecoveryActivity extends YouTubeBaseActivity implements
     YouTubePlayer.OnInitializedListener {
 
   private static final int RECOVERY_DIALOG_REQUEST = 1;

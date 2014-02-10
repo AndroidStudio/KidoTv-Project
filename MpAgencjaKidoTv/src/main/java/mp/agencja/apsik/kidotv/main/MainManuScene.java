@@ -7,9 +7,14 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import mp.agencja.apsik.kidotv.R;
 
@@ -46,6 +51,26 @@ public class MainManuScene extends Activity {
         btnLock.setOnTouchListener(onLockTouchListener);
         btnFx.setOnTouchListener(onFxTouchListener);
         btnVolume.setOnTouchListener(onVolumeTouchListener);
+
+        RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.menuLayout);
+
+        AnimationSet animationSetLeft = new AnimationSet(false);
+
+        Animation alfaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        alfaAnimation.setDuration(500);
+        animationSetLeft.addAnimation(alfaAnimation);
+
+        Animation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1.5f,
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f);
+        translateAnimation.setDuration(1000);
+        translateAnimation.setInterpolator(new DecelerateInterpolator());
+        animationSetLeft.addAnimation(translateAnimation);
+        animationSetLeft.setStartOffset(400);
+
+        menuLayout.startAnimation(animationSetLeft);
+        findViewById(R.id.tv_image).startAnimation(animationSetLeft);
     }
 
     private final ImageButton.OnTouchListener onSettingsTouchListener = new ImageButton.OnTouchListener() {
