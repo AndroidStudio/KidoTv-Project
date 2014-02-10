@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
+import android.util.Log;
 
 import mp.agencja.apsik.kidotv.R;
 
@@ -14,6 +16,9 @@ public class SplashScene extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_scene);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        Log.w("density:", "" + displayMetrics.densityDpi);
     }
 
     @Override
