@@ -3,35 +3,17 @@ package mp.agencja.apsik.kidotv.main;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.AudioManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,11 +22,7 @@ import mp.agencja.apsik.kidotv.R;
 
 public class PlayListScene extends Activity {
     private final static String TAG_LOG = "PlayListScene";
-    private final static String kido_play_list_url = "http://androidstudio.pl/kidotv/kido_play_list.json";
-    private static boolean needUpdate = true;
     private ViewPagerParallax viewPager;
-    private DownloadPlayListTask downloadPlayListTask;
-    private ProgressBar progressBar;
     private ImageButton btnSettings;
     private ImageButton btnFx;
     private ImageButton btnVolume;
@@ -53,15 +31,22 @@ public class PlayListScene extends Activity {
     private ImageButton btnRight;
     private ImageButton btndisplayAllPlayLists;
     private boolean lock;
-    private boolean accesToFavorites = false;
-    private List<List<HashMap<String, String>>> mainKidoList;
+    private RelativeLayout optionsLayout;
+    private boolean expanded = true;
+    public static Database database;
+    private ArrayList<List<HashMap<String, String>>> mainKidoList;
+    private ImageButton btnLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playlist_scene);
+        database = new Database(this);
+        database.openToWrite();
+
         btnSettings = (ImageButton) findViewById(R.id.btnSettings);
-        final ImageButton btnLock = (ImageButton) findViewById(R.id.btnLock);
+
+        btnLock = (ImageButton) findViewById(R.id.btnLock);
         btnFx = (ImageButton) findViewById(R.id.btnFx);
         btnVolume = (ImageButton) findViewById(R.id.btnVolume);
 
@@ -81,208 +66,67 @@ public class PlayListScene extends Activity {
         btndisplayAllPlayLists.setOnTouchListener(onDisplayAllPlayLists);
 
         viewPager = (ViewPagerParallax) findViewById(R.id.viewpager);
-        viewPager.setMaxPages(0);
+        viewPager.setMaxPages(3);
         viewPager.setBackgroundAsset();
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        optionsLayout = (RelativeLayout) findViewById(R.id.optionsLayout);
+    }
+
+    private void setContainers() {
+        final Cursor cursor = database.getAllContainers();
+        try {
+            if (cursor.getCount() > 0) {
+                mainKidoList = new ArrayList<List<HashMap<String, String>>>(3);
+                ArrayList<HashMap<String, String>> kidoPlayList = new ArrayList<HashMap<String, String>>(4);
+                while (cursor.moveToNext()) {
+                    String title = cursor.getString(0);
+                    String play_list_id = cursor.getString(1);
+                    String is_locked = cursor.getString(2);
+
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put("title", title);
+                    map.put("play_list_id", play_list_id);
+                    map.put("is_locked", is_locked);
+                    kidoPlayList.add(map);
+
+                    if (kidoPlayList.size() % 4 == 0) {
+                        mainKidoList.add(kidoPlayList);
+                        kidoPlayList = new ArrayList<HashMap<String, String>>(4);
+                    }
+                }
+            } else {
+                database.insertContainer("Tap to add playlist", "false");
+                database.insertContainer("Tap to add playlist", "false");
+                database.insertContainer("Tap to add playlist", "false");
+                database.insertContainer("Tap to unlock", "true");
+                database.insertContainer("Tap to unlock", "true");
+                database.insertContainer("Tap to unlock", "true");
+                database.insertContainer("Tap to unlock", "true");
+                database.insertContainer("Tap to unlock", "true");
+                database.insertContainer("Tap to unlock", "true");
+                database.insertContainer("Tap to unlock", "true");
+                database.insertContainer("Tap to unlock", "true");
+                database.insertContainer("Tap to unlock", "true");
+                setContainers();
+            }
+        } catch (Exception e) {
+            Log.e(TAG_LOG, "setContainers error...");
+        } finally {
+            cursor.close();
+        }
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(PlayListScene.this, mainKidoList);
+        viewPager.setAdapter(viewPagerAdapter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (needUpdate) {
-            if (downloadPlayListTask != null) {
-                AsyncTask.Status diStatus = downloadPlayListTask.getStatus();
-                if (diStatus != AsyncTask.Status.FINISHED) {
-                    return;
-                }
-            }
-            downloadPlayListTask = new DownloadPlayListTask();
-            downloadPlayListTask.execute(kido_play_list_url);
-        }
+        setContainers();
     }
-
-    public static void needUpdate(boolean update) {
-        needUpdate = update;
-    }
-
-    private class DownloadPlayListTask extends AsyncTask<String, Integer, Boolean> {
-
-        private final HttpClient httpClient = CustomHttpClient.getHttpClient();
-        private List<HashMap<String, String>> kidoPlayList;
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-            mainKidoList = new ArrayList<List<HashMap<String, String>>>();
-            kidoPlayList = new ArrayList<HashMap<String, String>>(4);
-        }
-
-        @Override
-        protected Boolean doInBackground(String... urls) {
-            InputStream inputStream;
-            try {
-                final HttpGet request = new HttpGet(urls[0]);
-                final HttpResponse response = httpClient.execute(request);
-                final StatusLine statusLine = response.getStatusLine();
-                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                    final HttpEntity httpEntity = response.getEntity();
-                    inputStream = httpEntity.getContent();
-                    try {
-                        final BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-                        final StringBuilder sb = new StringBuilder();
-                        String line;
-                        while ((line = br.readLine()) != null) {
-                            sb.append(line);
-                        }
-                        final JSONObject jsonObject = new JSONObject(sb.toString());
-                        final JSONArray jsonArray = jsonObject.getJSONArray("KidoTvPlayList");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            if (!isCancelled()) {
-                                final JSONObject jsonRow = jsonArray.getJSONObject(i);
-
-                                HashMap<String, String> map;
-                                map = getPlayListThumb(jsonRow.getString("PlayList"));
-                                if (map == null) return false;
-                                map.put("play_list_id", jsonRow.getString("PlayList"));
-                                publishProgress(i, jsonArray.length() - 1);
-                                kidoPlayList.add(map);
-                                if ((i + 1) % 4 == 0 || i == jsonArray.length() - 1) {
-                                    mainKidoList.add(kidoPlayList);
-                                    kidoPlayList = new ArrayList<HashMap<String, String>>(4);
-                                }
-                            }
-                        }
-                        br.close();
-                    } catch (Exception e) {
-                        Log.e(TAG_LOG, e.getMessage());
-                        return false;
-                    } finally {
-                        inputStream.close();
-                    }
-                } else {
-                    return false;
-                }
-                viewPager.setMaxPages(mainKidoList.size());
-            } catch (IOException e) {
-                Log.e(TAG_LOG, e.getMessage());
-                return false;
-            }
-            return true;
-        }
-
-        private HashMap<String, String> getPlayListThumb(String playListid) {
-            HashMap<String, String> hasMap = null;
-            InputStream inputStream;
-            final String youtubeData = "http://gdata.youtube.com/feeds/api/playlists/" + playListid + "?v=2&prettyprint=true&alt=json";
-            try {
-                final HttpGet request = new HttpGet(youtubeData);
-                final HttpResponse response = httpClient.execute(request);
-                final StatusLine statusLine = response.getStatusLine();
-                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                    final HttpEntity httpEntity = response.getEntity();
-                    inputStream = httpEntity.getContent();
-                    try {
-                        final BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-                        final StringBuilder sb = new StringBuilder();
-                        String line;
-                        while ((line = br.readLine()) != null) {
-                            sb.append(line);
-                        }
-                        final JSONObject jsonObject = new JSONObject(sb.toString());
-                        final JSONObject feed = jsonObject.getJSONObject("feed");
-
-                        final JSONObject mediaAndGroup = feed.getJSONObject("media$group");
-                        final JSONObject title = feed.getJSONObject("title");
-
-                        final JSONArray mediaThumbial = mediaAndGroup.getJSONArray("media$thumbnail");
-
-                        // final float desiny = PlayListScene.this.getResources().getDisplayMetrics().density;
-                        final JSONObject jsonRow;
-                        //  if (desiny > 1.0F) {
-                        //    jsonRow = mediaThumbial.getJSONObject(1);
-                        //  } else {
-                        jsonRow = mediaThumbial.getJSONObject(2);
-                        //   }
-
-                        hasMap = new HashMap<String, String>();
-                        hasMap.put("title", title.getString("$t"));
-                        hasMap.put("url", jsonRow.getString("url"));
-
-                        br.close();
-                    } catch (Exception e) {
-                        Log.e(TAG_LOG, e.getMessage());
-                        return null;
-                    } finally {
-                        inputStream.close();
-                    }
-                } else {
-                    return null;
-                }
-            } catch (IOException e) {
-                Log.e(TAG_LOG, e.getMessage());
-                return null;
-            }
-
-            return hasMap;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            double p1 = progress[0];
-            double p2 = progress[1];
-            double x = p1 * 100 / p2;
-            DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
-            decimalFormatSymbols.setDecimalSeparator('.');
-            decimalFormatSymbols.setGroupingSeparator(',');
-            DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", decimalFormatSymbols);
-            ((TextView) findViewById(R.id.progresTextView)).setText(decimalFormat.format(x) + "%");
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-            if (result) {
-                accesToFavorites = true;
-                progressBar.setVisibility(View.INVISIBLE);
-                viewPager.setVisibility(View.VISIBLE);
-                ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(PlayListScene.this, mainKidoList);
-                viewPager.setAdapter(viewPagerAdapter);
-                viewPager.setOnPageChangeListener(onPageChangeListener);
-            } else {
-                Toast.makeText(PlayListScene.this, "Connection error...", Toast.LENGTH_LONG).show();
-                PlayListScene.this.finish();
-            }
-        }
-    }
-
-    private final ViewPagerParallax.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int i, float v, int i2) {
-
-        }
-
-        @Override
-        public void onPageSelected(int i) {
-            Log.e(TAG_LOG, "selected page :" + i);
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int i) {
-
-        }
-    };
 
     @Override
     protected void onPause() {
         super.onPause();
-        needUpdate(true);
-        if (downloadPlayListTask != null) {
-            downloadPlayListTask.cancel(true);
-            downloadPlayListTask = null;
-        }
-
     }
 
     private final ImageButton.OnTouchListener onSettingsTouchListener = new ImageButton.OnTouchListener() {
@@ -290,6 +134,13 @@ public class PlayListScene extends Activity {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 scaleAnimation(1f, 0.75f, view, "none");
+                if (!expanded) {
+                    optionsLayout.setVisibility(View.GONE);
+                    expanded = true;
+                } else {
+                    optionsLayout.setVisibility(View.VISIBLE);
+                    expanded = false;
+                }
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "none");
             }
@@ -302,6 +153,7 @@ public class PlayListScene extends Activity {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 scaleAnimation(1f, 0.75f, view, "none");
                 if (isLock()) {
+                    btnLock.setImageDrawable(getResources().getDrawable(R.drawable.unlock_button));
                     btnBack.setEnabled(false);
                     btnLeft.setEnabled(false);
                     btnRight.setEnabled(false);
@@ -311,6 +163,7 @@ public class PlayListScene extends Activity {
                     btnVolume.setEnabled(false);
                     setLock(true);
                 } else {
+                    btnLock.setImageDrawable(getResources().getDrawable(R.drawable.start_lock_button));
                     btnBack.setEnabled(true);
                     btnLeft.setEnabled(true);
                     btnRight.setEnabled(true);
@@ -432,17 +285,8 @@ public class PlayListScene extends Activity {
                 if (action.equals("back")) {
                     finish();
                 } else if (action.equals("favorites")) {
-                    if (accesToFavorites) {
-                        final ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
-                        for (List<HashMap<String, String>> arraylist : mainKidoList) {
-                            for (HashMap<String, String> map : arraylist) {
-                                list.add(map);
-                            }
-                        }
-                        Intent intent = new Intent(PlayListScene.this, FavoritePlayListScene.class);
-                        intent.putExtra("list", list);
-                        startActivity(intent);
-                    }
+                    Intent intent = new Intent(PlayListScene.this, FavoritePlayListScene.class);
+                    startActivity(intent);
                 }
             }
         });
@@ -455,5 +299,11 @@ public class PlayListScene extends Activity {
 
     private void setLock(boolean lock) {
         this.lock = lock;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        database.close();
     }
 }

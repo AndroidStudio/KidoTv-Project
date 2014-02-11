@@ -2,7 +2,7 @@ package mp.agencja.apsik.kidotv.main;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -11,10 +11,13 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +27,13 @@ import mp.agencja.apsik.kidotv.R;
 public class FavoritePlayListScene extends Activity implements AdapterView.OnItemClickListener {
     private ListViewAdapter listViewAdapter;
     private ImageView headerView;
-    private ArrayList<HashMap<String, String>> mainList;
     private InputMethodManager inputMethodManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.favoriteplaylist_scene);
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -57,10 +61,10 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
         params.addRule(RelativeLayout.BELOW, headerView.getId());
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
         listView.setLayoutParams(params);
+        listView.setItemsCanFocus(true);
 
-
-        mainList = (ArrayList<HashMap<String, String>>) getIntent().getSerializableExtra("list");
-        listViewAdapter = new ListViewAdapter(this, mainList);
+        ArrayList<HashMap<String, String>> mainList = (ArrayList<HashMap<String, String>>) getIntent().getSerializableExtra("list");
+        listViewAdapter = new ListViewAdapter(this);
         listView.setAdapter(listViewAdapter);
         listView.setOnItemClickListener(this);
     }
@@ -68,7 +72,7 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
     @Override
     protected void onPause() {
         super.onPause();
-        PlayListScene.needUpdate(false);
+        //do poprrawy
         inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
     }
 
@@ -111,16 +115,37 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        final String playListId = view.getTag().toString();
-        final Intent intent = new Intent(FavoritePlayListScene.this, YouTubePlayerScene.class);
-        intent.putExtra("playListId", playListId);
-        startActivity(intent);
-    }
+        Cursor cursor = PlayListScene.database.getAllFavoritesItems();
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        listViewAdapter.database.close();
+        final String playListId = view.getTag().toString();
+        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBoxFavorites);
+        if (checkBox.isChecked()) {
+            PlayListScene.database.updateFavoriteItem(playListId, "false");
+            PlayListScene.database.updateContainerByPlayListId(playListId);
+        } else {
+            if (cursor.getCount() < 3) {
+                String title = ((TextView) view.findViewById(R.id.title)).getText().toString();
+                PlayListScene.database.updateFavoriteItem(playListId, "true");
+                Bundle bundle = getIntent().getExtras();
+                if (bundle != null && bundle.containsKey("container")) {
+                    String id = bundle.getString("container");
+                    PlayListScene.database.updateContainer(id, title, playListId);
+                    finish();
+                }else{
+                    PlayListScene.database.updateContainerByNullPlayList(title, playListId);
+                }
+            } else {
+                Toast.makeText(FavoritePlayListScene.this, "Buy pro version", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        checkBox.toggle();
+        listViewAdapter.getItems();
+        listViewAdapter.notifyDataSetChanged();
+
+//        final Intent intent = new Intent(FavoritePlayListScene.this, YouTubePlayerScene.class);
+//        intent.putExtra("playListId", playListId);
+//        startActivity(intent);
     }
 
     private void scaleAnimation(float from, float to, View view, final String action) {
@@ -133,11 +158,9 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
         scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationStart(Animation anim) {
                 if (action.equals("showAll")) {
-                    listViewAdapter.createItems(mainList);
-                    listViewAdapter.notifyDataSetChanged();
+
                 } else if (action.equals("favorites")) {
-                    listViewAdapter.createItems(mainList);
-                    listViewAdapter.showFavorites();
+
                 }
             }
 
@@ -166,7 +189,7 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
             int keyunicode = KEvent.getUnicodeChar(KEvent.getMetaState());
             char character = (char) keyunicode;
             if (keycode == KeyEvent.KEYCODE_ENTER) {
-                listViewAdapter.search(builder.toString());
+                //listViewAdapter.search(builder.toString());
                 builder.delete(0, builder.length());
                 inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
                 return false;

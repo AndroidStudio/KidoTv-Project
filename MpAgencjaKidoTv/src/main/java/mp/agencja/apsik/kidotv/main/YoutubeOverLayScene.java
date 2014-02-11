@@ -32,7 +32,9 @@ public class YoutubeOverLayScene extends Activity {
     private boolean allowShowing = false;
     private RelativeLayout mainLayout;
     private static TextView currentTimeTv, endTime;
-
+    private RelativeLayout optionsLayout;
+    private boolean expanded = true;
+    private ImageButton btnLock;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +47,8 @@ public class YoutubeOverLayScene extends Activity {
         btnSettings = (ImageButton) findViewById(R.id.btnSettings);
         btnVolume = (ImageButton) findViewById(R.id.btnVolume);
         btnFx = (ImageButton) findViewById(R.id.btnFx);
-        final ImageButton btnLock = (ImageButton) findViewById(R.id.btnLock);
+
+        btnLock = (ImageButton) findViewById(R.id.btnLock);
 
         btnSettings.setOnTouchListener(onSettingsTouchListener);
         btnLock.setOnTouchListener(onLockTouchListener);
@@ -66,6 +69,7 @@ public class YoutubeOverLayScene extends Activity {
         currentTimeTv.setText("00:00 /");
         endTime = (TextView) findViewById(R.id.endTime);
 
+        optionsLayout = (RelativeLayout) findViewById(R.id.optionsLayout);
     }
 
     private final ImageButton.OnTouchListener onPauseTouchListener = new ImageButton.OnTouchListener() {
@@ -97,6 +101,13 @@ public class YoutubeOverLayScene extends Activity {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 scaleAnimation(1f, 0.75f, view, "none");
+                if (!expanded) {
+                    optionsLayout.setVisibility(View.GONE);
+                    expanded = true;
+                } else {
+                    optionsLayout.setVisibility(View.VISIBLE);
+                    expanded = false;
+                }
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "none");
             }
@@ -109,6 +120,7 @@ public class YoutubeOverLayScene extends Activity {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 scaleAnimation(1f, 0.75f, view, "none");
                 if (isLock()) {
+                    btnLock.setImageDrawable(getResources().getDrawable(R.drawable.unlock_button));
                     mainLayout.setOnTouchListener(null);
                     btnBack.setEnabled(false);
                     btnPause.setEnabled(false);
@@ -119,6 +131,7 @@ public class YoutubeOverLayScene extends Activity {
                     btnVolume.setEnabled(false);
                     setLock(true);
                 } else {
+                    btnLock.setImageDrawable(getResources().getDrawable(R.drawable.start_lock_button));
                     mainLayout.setOnTouchListener(onMainLayoutTouchListener);
                     btnBack.setEnabled(true);
                     btnPlay.setEnabled(true);

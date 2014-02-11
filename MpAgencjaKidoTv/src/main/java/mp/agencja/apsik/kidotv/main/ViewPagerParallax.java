@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.os.Debug;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,7 +25,6 @@ public class ViewPagerParallax extends ViewPager {
     private int saved_height = -1;
     private int saved_max_num_pages = -1;
     private Bitmap saved_bitmap;
-    private boolean insufficientMemory = false;
 
     private int max_num_pages = 0;
     private int imageHeight;
@@ -103,18 +101,6 @@ public class ViewPagerParallax extends ViewPager {
                     imageHeight = imageHeight / options.inSampleSize;
                     imageWidth = imageWidth / options.inSampleSize;
                 }
-                double max = Runtime.getRuntime().maxMemory();
-                double heapSize = Runtime.getRuntime().totalMemory();
-                double heapRemaining = Runtime.getRuntime().freeMemory();
-                double nativeUsage = Debug.getNativeHeapAllocatedSize();
-                double remaining = max - (heapSize - heapRemaining) - nativeUsage;
-
-                int freeMemory = (int) (remaining / 1024);
-                int bitmap_size = imageHeight * imageWidth * 4 / 1024;
-                if (bitmap_size > freeMemory / 2) {
-                    insufficientMemory = true;
-                    return;
-                }
 
                 zoom_level = ((float) imageHeight) / getHeight();
                 overlap_level = zoom_level * Math.min(Math.max(imageWidth / zoom_level - getWidth(), 0) / (max_num_pages - 1), getWidth() / 2);
@@ -147,7 +133,6 @@ public class ViewPagerParallax extends ViewPager {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (!insufficientMemory) {
             if (current_position == -1)
                 current_position = getCurrentItem();
             src.set((int) (overlap_level * (current_position + current_offset)), 0,
@@ -155,7 +140,6 @@ public class ViewPagerParallax extends ViewPager {
             dst.set(getScrollX(), 0,
                     getScrollX() + canvas.getWidth(), canvas.getHeight());
             canvas.drawBitmap(saved_bitmap, src, dst, null);
-        }
     }
 
     public void setMaxPages(int pages) {
@@ -175,7 +159,6 @@ public class ViewPagerParallax extends ViewPager {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        if (!insufficientMemory)
             set_new_background();
     }
 

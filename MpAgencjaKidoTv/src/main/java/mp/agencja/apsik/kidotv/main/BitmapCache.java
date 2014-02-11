@@ -8,17 +8,22 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.util.LruCache;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class BitmapCache {
@@ -26,8 +31,6 @@ public class BitmapCache {
     private static final String LOG_TAG = "Cache";
     private final LruCache<String, Bitmap> mBitmapCache;
     private final ArrayList<String> mCurrentTasks;
-    private ImageView imageView;
-
 
     public BitmapCache(int size) {
         this.mCurrentTasks = new ArrayList<String>();
@@ -57,45 +60,49 @@ public class BitmapCache {
         return mBitmapCache.get(key);
     }
 
-    public void loadBitmap(String imagesId, ImageView imageView, ProgressBar progressBar, ViewPagerAdapter.GridViewAdapter gridViewAdapter) {
-        this.imageView = imageView;
-        final Bitmap bitmap = getBitmapFromCache(imagesId);
+    public void loadBitmap(String play_list_id, ImageView imageView, ViewPagerAdapter.GridViewAdapter gridViewAdapter) {
+        final Bitmap bitmap = getBitmapFromCache(play_list_id);
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
-            progressBar.setVisibility(View.GONE);
         } else {
-            if (!mCurrentTasks.contains(imagesId)) {
-                final DecodeImageTask decodeImageTask = new DecodeImageTask(imagesId, gridViewAdapter);
+            if (!mCurrentTasks.contains(play_list_id)) {
+                final DecodeImageTask decodeImageTask = new DecodeImageTask(play_list_id, gridViewAdapter, imageView);
                 decodeImageTask.execute();
             }
         }
     }
 
     public class DecodeImageTask extends AsyncTask<Integer, Integer, Bitmap> {
-        private final String url;
+        private final String play_list_id;
         private final ViewPagerAdapter.GridViewAdapter gridViewAdapter;
+        private final ImageView imageView;
 
-        public DecodeImageTask(String url, ViewPagerAdapter.GridViewAdapter gridViewAdapter) {
-            this.url = url;
+        public DecodeImageTask(String play_list_id, ViewPagerAdapter.GridViewAdapter gridViewAdapter, ImageView imageView) {
+            this.play_list_id = play_list_id;
             this.gridViewAdapter = gridViewAdapter;
+            this.imageView = imageView;
         }
 
         @Override
         protected void onPreExecute() {
-            mCurrentTasks.add(url);
+            mCurrentTasks.add(play_list_id);
         }
 
         @Override
         protected Bitmap doInBackground(Integer... id) {
+
+            final String imageUrl = getPlayListImageUrl(play_list_id);
+            if (imageUrl == null) return null;
+
             final HttpClient client = AndroidHttpClient.newInstance("Android");
-            final HttpGet request = new HttpGet(url);
+            final HttpGet request = new HttpGet(imageUrl);
             Bitmap bitmap = null;
 
             try {
                 HttpResponse response = client.execute(request);
                 final int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode != HttpStatus.SC_OK) {
-                    Log.w(LOG_TAG, "Error while retrieving bitmap from " + url);
+                    Log.w(LOG_TAG, "Error while retrieving bitmap from " + play_list_id);
                     return null;
                 }
                 final HttpEntity entity = response.getEntity();
@@ -104,7 +111,7 @@ public class BitmapCache {
                         byte[] bytes = EntityUtils.toByteArray(entity);
                         if (bytes != null) {
                             bitmap = decodeBitmap(bytes);
-                            addBitmapToCache(url, bitmap);
+                            addBitmapToCache(play_list_id, bitmap);
                             return bitmap;
                         }
                         return null;
@@ -114,16 +121,60 @@ public class BitmapCache {
                 }
             } catch (Exception e) {
                 request.abort();
-                Log.w(LOG_TAG, "Error while retrieving bitmap from " + url, e);
+                Log.w(LOG_TAG, "Error while retrieving bitmap from " + play_list_id, e);
             } finally {
                 ((AndroidHttpClient) client).close();
             }
             return bitmap;
         }
 
+        private String getPlayListImageUrl(String play_list_id) {
+            final HttpClient httpClient = CustomHttpClient.getHttpClient();
+            final String youtubeData = "http://gdata.youtube.com/feeds/api/playlists/" + play_list_id + "?v=2&prettyprint=true&alt=json";
+            String imageUrl = null;
+            try {
+                final HttpGet request = new HttpGet(youtubeData);
+                final HttpResponse response = httpClient.execute(request);
+                final StatusLine statusLine = response.getStatusLine();
+                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                    final HttpEntity httpEntity = response.getEntity();
+                    InputStream inputStream = httpEntity.getContent();
+                    try {
+                        final BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+                        final StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        final JSONObject jsonObject = new JSONObject(sb.toString());
+                        final JSONObject feed = jsonObject.getJSONObject("feed");
+                        final JSONObject mediaAndGroup = feed.getJSONObject("media$group");
+                        final JSONArray mediaThumbial = mediaAndGroup.getJSONArray("media$thumbnail");
+                        final JSONObject jsonRow;
+                        jsonRow = mediaThumbial.getJSONObject(2);
+                        imageUrl = jsonRow.getString("url");
+
+                        br.close();
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, e.getMessage());
+                        return null;
+                    } finally {
+                        inputStream.close();
+                    }
+                } else {
+                    return null;
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, e.getMessage());
+                return null;
+            }
+            Log.w(LOG_TAG, imageUrl);
+            return imageUrl;
+        }
+
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            mCurrentTasks.remove(url);
+            mCurrentTasks.remove(play_list_id);
             if (bitmap != null) {
                 gridViewAdapter.notifyDataSetChanged();
             }
@@ -136,7 +187,8 @@ public class BitmapCache {
             options.inInputShareable = true;
             options.inPreferredConfig = Bitmap.Config.RGB_565;
             return Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options),
-                    (int) (0.7 * imageView.getWidth()), (int) (0.7 * imageView.getWidth()) * options.outHeight / options.outWidth, true);
+                    (int) (0.7 * Integer.valueOf(imageView.getTag().toString())),
+                    (int) (0.7 * Integer.valueOf(imageView.getTag().toString())) * options.outHeight / options.outWidth, true);
         }
 
     }

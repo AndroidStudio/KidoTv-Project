@@ -11,8 +11,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +23,9 @@ class ViewPagerAdapter extends PagerAdapter {
     private final LayoutInflater inflater;
     private final List<List<HashMap<String, String>>> mainKidoList;
     private BitmapCache cache;
-
+    private final int width;
     public ViewPagerAdapter(Context context, List<List<HashMap<String, String>>> mainKidoList) {
+        width = context.getResources().getDrawable(R.drawable.video_thumb_unlocked).getIntrinsicWidth();
         this.mainKidoList = mainKidoList;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
@@ -74,9 +75,18 @@ class ViewPagerAdapter extends PagerAdapter {
             final Context context = view.getContext();
             if (context != null) {
                 final String playListId = view.getTag().toString();
-                final Intent intent = new Intent(context, YouTubePlayerScene.class);
-                intent.putExtra("playListId", playListId);
-                context.startActivity(intent);
+                if (playListId.equals("item_locked")) {
+                    Toast.makeText(context, "Buy pro version", Toast.LENGTH_SHORT).show();
+                } else if (playListId.equals("")) {
+                    Intent intent = new Intent(context, FavoritePlayListScene.class);
+                    intent.putExtra("container", String.valueOf(i + 1));
+                    context.startActivity(intent);
+
+                } else {
+                    final Intent intent = new Intent(context, YouTubePlayerScene.class);
+                    intent.putExtra("playListId", playListId);
+                    context.startActivity(intent);
+                }
             }
         }
     };
@@ -95,12 +105,12 @@ class ViewPagerAdapter extends PagerAdapter {
 
         @Override
         public Object getItem(int i) {
-            return null;
+            return i;
         }
 
         @Override
         public long getItemId(int i) {
-            return 0;
+            return i;
         }
 
         @Override
@@ -108,14 +118,21 @@ class ViewPagerAdapter extends PagerAdapter {
             final View view;
             view = inflater.inflate(R.layout.gridview_item, viewGroup, false);
             if (view != null) {
-                final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
                 final ImageView imageView = (ImageView) view.findViewById(R.id.video);
+                imageView.setTag(width);
                 final HashMap<String, String> map = list.get(position);
                 final TextView textViewTitle = (TextView) view.findViewById(R.id.title);
                 textViewTitle.setMaxWidth(textViewTitle.getWidth());
-                cache.loadBitmap(map.get("url"), imageView, progressBar, GridViewAdapter.this);
                 textViewTitle.setText(map.get("title"));
-                view.setTag(map.get("play_list_id"));
+                if (map.get("is_locked").equals("true")) {
+                    view.setTag("item_locked");
+                } else {
+                    view.setTag(map.get("play_list_id"));
+                    imageView.setBackgroundResource(R.drawable.video_thumb_unlocked);
+                    if (!map.get("play_list_id").equals("")) {
+                        cache.loadBitmap(map.get("play_list_id"), imageView, GridViewAdapter.this);
+                    }
+                }
             }
             return view;
         }

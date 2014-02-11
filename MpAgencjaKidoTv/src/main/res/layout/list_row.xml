@@ -6,13 +6,13 @@
               android:layout_height="wrap_content">
 
     <CheckBox
+        android:focusable="false"
         android:layout_marginLeft="15dp"
         android:id="@+id/checkBoxFavorites"
         android:layout_width="40dp"
         android:button="@drawable/checkbox_selector"
         android:layout_height="40dp"
-        android:clickable="true"
-        android:focusable="false"/>
+        android:clickable="false"/>
 
     <TextView
         android:paddingRight="15dp"

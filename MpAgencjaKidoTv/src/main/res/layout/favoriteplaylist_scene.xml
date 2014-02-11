@@ -20,6 +20,7 @@
         android:contentDescription="@string/start_menu_bg_image"/>
 
     <ListView
+        android:choiceMode="singleChoice"
         android:cacheColorHint="#fff"
         android:divider="@color/custom"
         android:dividerHeight="1px"

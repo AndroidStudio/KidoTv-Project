@@ -23,12 +23,14 @@
         android:contentDescription="@string/start_menu_bg_image"/>
 
     <RelativeLayout
+        android:animateLayoutChanges="true"
         android:id="@+id/menuLayout"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <ImageButton
+            android:visibility="gone"
             android:layout_centerHorizontal="true"
             android:id="@+id/btnStart"
             android:layout_marginTop="@dimen/start_button_margin_top"
@@ -40,6 +42,7 @@
             android:contentDescription="@string/image_start_button"/>
 
         <ImageButton
+            android:visibility="gone"
             android:padding="@dimen/start_center_menu_buttons"
             android:layout_below="@+id/btnStart"
             android:id="@+id/btnGoogle"
@@ -50,6 +53,7 @@
             android:contentDescription="@string/google_button"/>
 
         <ImageButton
+            android:visibility="gone"
             android:padding="@dimen/start_center_menu_buttons"
             android:layout_below="@+id/btnStart"
             android:layout_toRightOf="@+id/btnGoogle"
@@ -61,6 +65,7 @@
             android:contentDescription="@string/rate_button"/>
 
         <ImageButton
+            android:visibility="gone"
             android:padding="@dimen/start_center_menu_buttons"
             android:layout_below="@+id/btnStart"
             android:layout_toRightOf="@+id/btnRate"

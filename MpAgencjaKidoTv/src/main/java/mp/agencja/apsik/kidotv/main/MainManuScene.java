@@ -28,6 +28,9 @@ public class MainManuScene extends Activity {
     private ImageButton btnSettings;
     private ImageButton btnFx;
     private ImageButton btnVolume;
+    private ImageButton btnLock;
+    private RelativeLayout optionsLayout;
+    private boolean expanded = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,8 @@ public class MainManuScene extends Activity {
         btnRate = (ImageButton) findViewById(R.id.btnRate);
         btnFacebook = (ImageButton) findViewById(R.id.btnFacebook);
         btnSettings = (ImageButton) findViewById(R.id.btnSettings);
-        final ImageButton btnLock = (ImageButton) findViewById(R.id.btnLock);
+
+        btnLock = (ImageButton) findViewById(R.id.btnLock);
         btnFx = (ImageButton) findViewById(R.id.btnFx);
         btnVolume = (ImageButton) findViewById(R.id.btnVolume);
 
@@ -51,8 +55,6 @@ public class MainManuScene extends Activity {
         btnLock.setOnTouchListener(onLockTouchListener);
         btnFx.setOnTouchListener(onFxTouchListener);
         btnVolume.setOnTouchListener(onVolumeTouchListener);
-
-        RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.menuLayout);
 
         AnimationSet animationSetLeft = new AnimationSet(false);
 
@@ -68,9 +70,24 @@ public class MainManuScene extends Activity {
         translateAnimation.setInterpolator(new DecelerateInterpolator());
         animationSetLeft.addAnimation(translateAnimation);
         animationSetLeft.setStartOffset(400);
+        animationSetLeft.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationStart(Animation anim) {
+            }
 
-        menuLayout.startAnimation(animationSetLeft);
+            public void onAnimationRepeat(Animation anim) {
+            }
+
+            public void onAnimationEnd(Animation anim) {
+                btnStart.setVisibility(View.VISIBLE);
+                findViewById(R.id.btnGoogle).setVisibility(View.VISIBLE);
+                findViewById(R.id.btnRate).setVisibility(View.VISIBLE);
+                findViewById(R.id.btnFacebook).setVisibility(View.VISIBLE);
+            }
+        });
+
         findViewById(R.id.tv_image).startAnimation(animationSetLeft);
+        optionsLayout = (RelativeLayout) findViewById(R.id.optionsLayout);
+
     }
 
     private final ImageButton.OnTouchListener onSettingsTouchListener = new ImageButton.OnTouchListener() {
@@ -78,6 +95,13 @@ public class MainManuScene extends Activity {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 scaleAnimation(1f, 0.75f, view, "none");
+                if (!expanded) {
+                    optionsLayout.setVisibility(View.GONE);
+                    expanded = true;
+                } else {
+                    optionsLayout.setVisibility(View.VISIBLE);
+                    expanded = false;
+                }
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "none");
             }
@@ -89,6 +113,7 @@ public class MainManuScene extends Activity {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 if (isLock()) {
+                    btnLock.setImageDrawable(getResources().getDrawable(R.drawable.unlock_button));
                     btnStart.setEnabled(false);
                     btnGoogle.setEnabled(false);
                     btnRate.setEnabled(false);
@@ -98,6 +123,7 @@ public class MainManuScene extends Activity {
                     btnVolume.setEnabled(false);
                     setLock(true);
                 } else {
+                    btnLock.setImageDrawable(getResources().getDrawable(R.drawable.start_lock_button));
                     btnStart.setEnabled(true);
                     btnGoogle.setEnabled(true);
                     btnRate.setEnabled(true);
@@ -216,5 +242,11 @@ public class MainManuScene extends Activity {
 
     private void setLock(boolean lock) {
         this.lock = lock;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //System.exit(0);
     }
 }

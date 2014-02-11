@@ -122,9 +122,4 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
 
         }
     };
-    @Override
-    protected void onPause() {
-        super.onPause();
-        PlayListScene.needUpdate(false);
-    }
 }
