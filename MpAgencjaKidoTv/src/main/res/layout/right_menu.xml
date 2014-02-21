@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content">
@@ -27,7 +26,6 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/image_settings_button"/>
 
-
         <RelativeLayout
             android:layout_centerHorizontal="true"
             android:id="@+id/optionsLayout"
@@ -37,22 +35,11 @@
             android:layout_below="@+id/btnSettings">
 
             <ImageButton
-                android:layout_centerHorizontal="true"
-                android:paddingLeft="9dp"
-                android:paddingRight="9dp"
-                android:layout_margin="@dimen/right_menu_buttons_margin"
-                android:id="@+id/btnLock"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/start_lock_button"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/image_lock"/>
-
-            <ImageButton
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="@dimen/right_menu_buttons_margin"
                 android:id="@+id/btnFx"
-                android:layout_below="@+id/btnLock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/start_fx_button"
@@ -72,4 +59,5 @@
                 android:contentDescription="@string/image_volume"/>
         </RelativeLayout>
     </RelativeLayout>
+
 </merge>

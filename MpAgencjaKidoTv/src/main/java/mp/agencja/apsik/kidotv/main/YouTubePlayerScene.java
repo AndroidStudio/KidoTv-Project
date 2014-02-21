@@ -12,10 +12,15 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
     private YouTubePlayerView playerView;
     public static YouTubePlayer youtubePlayer;
     public static Activity activity;
+    private String play_list_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.containsKey("playListId")) {
+            play_list_id = bundle.getString("playListId");
+        }
         activity = YouTubePlayerScene.this;
         Intent intent = new Intent(YouTubePlayerScene.this, YoutubeOverLayScene.class);
         startActivity(intent);
@@ -32,19 +37,17 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
 
     @Override
     public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean wasRestored) {
-        final Bundle bundle = getIntent().getExtras();
-        if (bundle != null && bundle.containsKey("playListId")) {
-            if (!wasRestored) {
-                youtubePlayer = player;
-                youtubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
-                youtubePlayer.setFullscreen(true);
-                youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
-                youtubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
-                youtubePlayer.setPlaybackEventListener(playbackEventListener);
-                youtubePlayer.setPlaylistEventListener(playlistEventListener);
-                youtubePlayer.loadPlaylist(bundle.getString("playListId"));
-            }
+        if (!wasRestored) {
+            youtubePlayer = player;
+            youtubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
+            youtubePlayer.setFullscreen(true);
+            youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+            youtubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
+            youtubePlayer.setPlaybackEventListener(playbackEventListener);
+            youtubePlayer.setPlaylistEventListener(playlistEventListener);
+            youtubePlayer.loadPlaylist(play_list_id);
         }
+
     }
 
     private final YouTubePlayer.PlayerStateChangeListener playerStateChangeListener = new YouTubePlayer.PlayerStateChangeListener() {
@@ -66,6 +69,7 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
         @Override
         public void onVideoStarted() {
             YoutubeOverLayScene.handler.postDelayed(YoutubeOverLayScene.runnable, 1000);
+            YoutubeOverLayScene.handlerButtonsVisibility.postDelayed(YoutubeOverLayScene.runnableVisibilityButtons, 5000);
         }
 
         @Override
@@ -119,7 +123,7 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
 
         @Override
         public void onPlaylistEnded() {
-
+            youtubePlayer.loadPlaylist(play_list_id);
         }
     };
 }

@@ -2,13 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="mp.agencja.apsik.kidotv">
 
+    <!--nie dawac przy aktywnosci z notyfikacja-->
+    <!--android:launchMode="singleInstance"-->
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="true"
-        android:requiresSmallestWidthDp="600"
         android:smallScreens="false"
         android:xlargeScreens="true"/>
 
@@ -29,6 +33,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:launchMode="singleInstance"
             android:name="mp.agencja.apsik.kidotv.main.MainManuScene"
             android:screenOrientation="landscape"
             android:theme="@style/Theme"/>
@@ -37,14 +42,17 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme"/>
         <activity
+            android:launchMode="singleInstance"
             android:name="mp.agencja.apsik.kidotv.main.YouTubePlayerScene"
             android:screenOrientation="landscape"
             android:theme="@style/Theme"/>
         <activity
+            android:launchMode="singleInstance"
             android:name="mp.agencja.apsik.kidotv.main.YoutubeOverLayScene"
             android:screenOrientation="landscape"
             android:theme="@style/ThemeOverLayYoutube"/>
         <activity
+            android:launchMode="singleInstance"
             android:name="mp.agencja.apsik.kidotv.main.FavoritePlayListScene"
             android:screenOrientation="landscape"
             android:theme="@style/Theme"/>

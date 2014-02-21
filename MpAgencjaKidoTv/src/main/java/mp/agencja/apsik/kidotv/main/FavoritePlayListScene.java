@@ -3,7 +3,12 @@ package mp.agencja.apsik.kidotv.main;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,6 +17,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -19,22 +25,34 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import mp.agencja.apsik.kidotv.R;
 
 public class FavoritePlayListScene extends Activity implements AdapterView.OnItemClickListener {
     private ListViewAdapter listViewAdapter;
-    private ImageView headerView;
+    private EditText headerView;
     private InputMethodManager inputMethodManager;
+    private final StringBuilder builder = new StringBuilder();
+    private Handler handler = new Handler();
+    private ImageView buyPremiumScene;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.favoriteplaylist_scene);
+        if (!PlayListScene.database.isOpen()) {
+            PlayListScene.database.openToWrite();
+        }
+
+        buyPremiumScene = (ImageView) findViewById(R.id.image_buy_premium_full_scene);
+        final int width = buyPremiumScene.getDrawable().getIntrinsicWidth();
+        buyPremiumScene.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(FavoritePlayListScene.this, "Buy premium", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
@@ -46,34 +64,78 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
         ImageButton displayFavorites = (ImageButton) findViewById(R.id.favorites);
         displayFavorites.setOnTouchListener(onDisplayFavoritesTouchListener);
 
-
-        headerView = (ImageView) findViewById(R.id.headerview);
-        headerView.setOnClickListener(new View.OnClickListener() {
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "font.TTF");
+        headerView = (EditText) findViewById(R.id.headerview);
+        headerView.setCursorVisible(false);
+        headerView.setTypeface(typeface);
+        headerView.setMaxWidth(headerView.getWidth());
+        headerView.setTextSize(TypedValue.COMPLEX_UNIT_PX, width / 21);
+        headerView.addTextChangedListener(textWatcher);
+        headerView.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onClick(View view) {
-                inputMethodManager.toggleSoftInputFromWindow(headerView.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    headerView.clearFocus();
+                    headerView.requestFocus();
+                    return true;
+                }
+                return false;
             }
         });
-
-
         ListView listView = (ListView) findViewById(R.id.listView);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) (0.9 * headerView.getDrawable().getIntrinsicWidth()), (int) (3.5 * headerView.getDrawable().getIntrinsicHeight()));
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, buyPremiumScene.getDrawable().getIntrinsicHeight());
         params.addRule(RelativeLayout.BELOW, headerView.getId());
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
         listView.setLayoutParams(params);
         listView.setItemsCanFocus(true);
 
-        ArrayList<HashMap<String, String>> mainList = (ArrayList<HashMap<String, String>>) getIntent().getSerializableExtra("list");
         listViewAdapter = new ListViewAdapter(this);
         listView.setAdapter(listViewAdapter);
         listView.setOnItemClickListener(this);
     }
 
+    private final TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            listViewAdapter.searchItems(charSequence.toString());
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
-        //do poprrawy
-        inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+        handler.removeCallbacks(runnable);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent KEvent) {
+        int keyaction = KEvent.getAction();
+        if (keyaction == KeyEvent.ACTION_DOWN) {
+            int keycode = KEvent.getKeyCode();
+            if (keycode == KeyEvent.KEYCODE_ENTER) {
+                headerView.removeTextChangedListener(textWatcher);
+                headerView.setText("");
+                headerView.addTextChangedListener(textWatcher);
+                return false;
+            }
+
+        }
+        return super.dispatchKeyEvent(KEvent);
     }
 
     private final ImageButton.OnTouchListener onShowAllTouchListener = new ImageButton.OnTouchListener() {
@@ -115,8 +177,7 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Cursor cursor = PlayListScene.database.getAllFavoritesItems();
-
+        final Cursor cursor = PlayListScene.database.getAllFavoritesItems();
         final String playListId = view.getTag().toString();
         final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBoxFavorites);
         if (checkBox.isChecked()) {
@@ -131,22 +192,26 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
                     String id = bundle.getString("container");
                     PlayListScene.database.updateContainer(id, title, playListId);
                     finish();
-                }else{
+                } else {
                     PlayListScene.database.updateContainerByNullPlayList(title, playListId);
                 }
             } else {
-                Toast.makeText(FavoritePlayListScene.this, "Buy pro version", Toast.LENGTH_SHORT).show();
+                handler.postDelayed(runnable, 5000);
+                buyPremiumScene.setVisibility(View.VISIBLE);
                 return;
             }
         }
         checkBox.toggle();
         listViewAdapter.getItems();
         listViewAdapter.notifyDataSetChanged();
-
-//        final Intent intent = new Intent(FavoritePlayListScene.this, YouTubePlayerScene.class);
-//        intent.putExtra("playListId", playListId);
-//        startActivity(intent);
     }
+
+    private final Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            buyPremiumScene.setVisibility(View.INVISIBLE);
+        }
+    };
 
     private void scaleAnimation(float from, float to, View view, final String action) {
         final ScaleAnimation scaleAnimation = new ScaleAnimation(
@@ -158,9 +223,11 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
         scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationStart(Animation anim) {
                 if (action.equals("showAll")) {
-
+                    listViewAdapter.getItems();
+                    listViewAdapter.notifyDataSetChanged();
                 } else if (action.equals("favorites")) {
-
+                    listViewAdapter.getAllFavorites();
+                    listViewAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -174,28 +241,5 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
             }
         });
         view.startAnimation(scaleAnimation);
-    }
-
-    private final StringBuilder builder = new StringBuilder();
-
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent KEvent) {
-        int keyaction = KEvent.getAction();
-
-        if (keyaction == KeyEvent.ACTION_DOWN) {
-            int keycode = KEvent.getKeyCode();
-
-            int keyunicode = KEvent.getUnicodeChar(KEvent.getMetaState());
-            char character = (char) keyunicode;
-            if (keycode == KeyEvent.KEYCODE_ENTER) {
-                //listViewAdapter.search(builder.toString());
-                builder.delete(0, builder.length());
-                inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
-                return false;
-            }
-            builder.append(character);
-        }
-        return super.dispatchKeyEvent(KEvent);
     }
 }

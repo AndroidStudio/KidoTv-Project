@@ -25,5 +25,8 @@
     <string name="search_icon">search_icon</string>
     <string name="favorites_icon">favorites_icon</string>
     <string name="progrestextview">0.00%</string>
+    <string name="price">price</string>
+    <string name="monkey">monkey</string>
+    <string name="search">Tap to search playlist</string>
 
 </resources>

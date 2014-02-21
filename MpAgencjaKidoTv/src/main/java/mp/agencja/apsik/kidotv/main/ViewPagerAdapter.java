@@ -3,7 +3,10 @@ package mp.agencja.apsik.kidotv.main;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,10 +28,22 @@ class ViewPagerAdapter extends PagerAdapter {
     private final List<List<HashMap<String, String>>> mainKidoList;
     private BitmapCache cache;
     private final int width;
-    public ViewPagerAdapter(Context context, List<List<HashMap<String, String>>> mainKidoList) {
-        width = context.getResources().getDrawable(R.drawable.video_thumb_unlocked).getIntrinsicWidth();
+    private final Typeface typeface;
+    private Handler handler = new Handler();
+    private ImageView buyPremiumScene;
+
+    public ViewPagerAdapter(final PlayListScene context, List<List<HashMap<String, String>>> mainKidoList) {
+        this.width = context.getResources().getDrawable(R.drawable.video_thumb_unlocked).getIntrinsicWidth();
+        this.buyPremiumScene = (ImageView) context.findViewById(R.id.image_buy_premium_full_scene);
+        this.buyPremiumScene.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, "Buy premium", Toast.LENGTH_SHORT).show();
+            }
+        });
+        this.typeface = Typeface.createFromAsset(context.getAssets(), "font.TTF");
         this.mainKidoList = mainKidoList;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         final int cacheSize = 1024 * 1024 * memClass;
 
@@ -69,6 +85,7 @@ class ViewPagerAdapter extends PagerAdapter {
         return view;
     }
 
+
     private final GridView.OnItemClickListener onGridItemClickListener = new GridView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -76,18 +93,25 @@ class ViewPagerAdapter extends PagerAdapter {
             if (context != null) {
                 final String playListId = view.getTag().toString();
                 if (playListId.equals("item_locked")) {
-                    Toast.makeText(context, "Buy pro version", Toast.LENGTH_SHORT).show();
-                } else if (playListId.equals("")) {
+                    handler.postDelayed(runnable, 5000);
+                    buyPremiumScene.setVisibility(View.VISIBLE);
+                } else if (playListId.equals("null")) {
                     Intent intent = new Intent(context, FavoritePlayListScene.class);
                     intent.putExtra("container", String.valueOf(i + 1));
                     context.startActivity(intent);
-
                 } else {
                     final Intent intent = new Intent(context, YouTubePlayerScene.class);
                     intent.putExtra("playListId", playListId);
                     context.startActivity(intent);
                 }
             }
+        }
+    };
+
+    private final Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            buyPremiumScene.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -124,13 +148,24 @@ class ViewPagerAdapter extends PagerAdapter {
                 final TextView textViewTitle = (TextView) view.findViewById(R.id.title);
                 textViewTitle.setMaxWidth(textViewTitle.getWidth());
                 textViewTitle.setText(map.get("title"));
+                textViewTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, width / 17);
+                textViewTitle.setTypeface(typeface);
                 if (map.get("is_locked").equals("true")) {
                     view.setTag("item_locked");
+                    textViewTitle.setPadding(textViewTitle.getPaddingLeft(), textViewTitle.getPaddingTop(),
+                            textViewTitle.getPaddingRight() * 6, textViewTitle.getPaddingBottom());
+                    view.findViewById(R.id.price_image).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.monkey).setVisibility(View.VISIBLE);
+                    textViewTitle.setBackgroundResource(R.drawable.title_thumb_premium);
+                    imageView.setBackgroundResource(R.drawable.video_thumb_buy_premium);
                 } else {
                     view.setTag(map.get("play_list_id"));
-                    imageView.setBackgroundResource(R.drawable.video_thumb_unlocked);
-                    if (!map.get("play_list_id").equals("")) {
-                        cache.loadBitmap(map.get("play_list_id"), imageView, GridViewAdapter.this);
+                    if (!map.get("play_list_id").equals("null")) {
+                        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progerssBar);
+                        progressBar.setVisibility(View.VISIBLE);
+                        cache.loadBitmap(map.get("play_list_id"), imageView, GridViewAdapter.this, progressBar);
+                    } else {
+                        imageView.setBackgroundResource(R.drawable.video_thumb_unlocked);
                     }
                 }
             }

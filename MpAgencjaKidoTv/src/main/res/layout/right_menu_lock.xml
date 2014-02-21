@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:animateLayoutChanges="true"
+        android:id="@+id/rightMenuLayout"
+        android:layout_margin="@dimen/right_manu_margin"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/start_bg_menu">
+
+        <ImageButton
+            android:paddingLeft="4dp"
+            android:paddingBottom="3dp"
+            android:paddingRight="6dp"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/right_menu_buttons_margin"
+            android:id="@+id/btnSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/start_settings_button"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/image_settings_button"/>
+
+
+        <RelativeLayout
+            android:layout_centerHorizontal="true"
+            android:id="@+id/optionsLayout"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnSettings">
+
+            <ImageButton
+                android:layout_centerHorizontal="true"
+                android:paddingLeft="9dp"
+                android:paddingRight="9dp"
+                android:layout_margin="@dimen/right_menu_buttons_margin"
+                android:id="@+id/btnLock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/start_lock_button"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/image_lock"/>
+
+            <ImageButton
+                android:layout_centerHorizontal="true"
+                android:layout_margin="@dimen/right_menu_buttons_margin"
+                android:id="@+id/btnFx"
+                android:layout_below="@+id/btnLock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/start_fx_button"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/image_fx"/>
+
+            <ImageButton
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="5dp"
+                android:layout_margin="@dimen/right_menu_buttons_margin"
+                android:id="@+id/btnVolume"
+                android:layout_below="@+id/btnFx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/start_volume_button"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/image_volume"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</merge>

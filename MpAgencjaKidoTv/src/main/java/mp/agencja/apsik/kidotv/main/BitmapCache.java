@@ -8,7 +8,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.util.LruCache;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -55,14 +57,15 @@ public class BitmapCache {
     }
 
     private Bitmap getBitmapFromCache(String key) {
-        Log.d(LOG_TAG, "MaxSize: " + mBitmapCache.maxSize() + " bytes");
-        Log.d(LOG_TAG, "Size:    " + mBitmapCache.size() + " bytes");
+//        Log.d(LOG_TAG, "MaxSize: " + mBitmapCache.maxSize() + " bytes");
+//        Log.d(LOG_TAG, "Size:    " + mBitmapCache.size() + " bytes");
         return mBitmapCache.get(key);
     }
 
-    public void loadBitmap(String play_list_id, ImageView imageView, ViewPagerAdapter.GridViewAdapter gridViewAdapter) {
+    public void loadBitmap(String play_list_id, ImageView imageView, ViewPagerAdapter.GridViewAdapter gridViewAdapter, ProgressBar progressBar) {
         final Bitmap bitmap = getBitmapFromCache(play_list_id);
         if (bitmap != null) {
+            progressBar.setVisibility(View.INVISIBLE);
             imageView.setImageBitmap(bitmap);
         } else {
             if (!mCurrentTasks.contains(play_list_id)) {

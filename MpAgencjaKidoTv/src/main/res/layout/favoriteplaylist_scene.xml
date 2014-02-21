@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true">
 
     <ImageView
         android:layout_width="match_parent"
@@ -10,16 +11,22 @@
         android:src="@drawable/favorites_scene_bg"
         android:contentDescription="@string/start_menu_bg_image"/>
 
-    <ImageView
+    <EditText
+        android:textColorHint="@android:color/white"
+        android:textColor="@android:color/white"
+        android:hint="@string/search"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="100dp"
         android:id="@+id/headerview"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/header_view_icon"
-        android:contentDescription="@string/start_menu_bg_image"/>
+        android:background="@drawable/header_view_icon"/>
 
     <ListView
+        android:scrollbars="none"
         android:choiceMode="singleChoice"
         android:cacheColorHint="#fff"
         android:divider="@color/custom"
@@ -30,7 +37,7 @@
         android:background="@android:color/white"/>
 
     <ImageView
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/listView"
         android:layout_width="wrap_content"
@@ -40,7 +47,7 @@
 
     <LinearLayout
         android:layout_below="@id/listView"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -63,6 +70,16 @@
             android:contentDescription="@string/favorites_icon"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:visibility="invisible"
+        android:layout_below="@+id/headerview"
+        android:id="@+id/image_buy_premium_full_scene"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/buy_premium_full_scene"
+        android:contentDescription="@string/start_menu_bg_image"/>
 
     <ImageButton
         android:layout_margin="5dp"

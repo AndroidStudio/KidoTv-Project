@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -26,8 +25,34 @@
         android:background="@drawable/title_thumb"
         android:id="@+id/title"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ProgressBar
+        android:id="@+id/progerssBar"
+        android:visibility="gone"
+        android:layout_margin="@dimen/progres_bar_gridView_item_margin"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:paddingRight="10dp"
+        android:id="@+id/price_image"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
+        android:src="@drawable/price_icon"
+        android:contentDescription="@string/price"/>
 
-
+    <ImageView
+        android:id="@+id/monkey"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/monkey_icon"
+        android:contentDescription="@string/monkey"/>
 </RelativeLayout>

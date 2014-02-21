@@ -4,7 +4,8 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:id="@+id/mainLayout"
-                android:keepScreenOn="true">
+                android:keepScreenOn="true"
+                android:animateLayoutChanges="true">
 
 
     <ImageButton
@@ -16,7 +17,7 @@
         android:src="@drawable/back_icon"
         android:contentDescription="@string/back_button_img"/>
 
-    <include layout="@layout/right_menu"/>
+    <include layout="@layout/right_menu_lock"/>
 
     <Button
         android:visibility="gone"
@@ -57,4 +58,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/time"/>
+
+    <ImageView
+        android:visibility="gone"
+        android:src="@drawable/cat"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:id="@+id/randomanimal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>

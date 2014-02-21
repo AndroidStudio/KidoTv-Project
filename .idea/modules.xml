@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MpAgencjaKidoTv/MpAgencjaKidoTv.iml" filepath="$PROJECT_DIR$/MpAgencjaKidoTv/MpAgencjaKidoTv.iml" />
       <module fileurl="file://$PROJECT_DIR$/MpAgencjaKidoTv-Project.iml" filepath="$PROJECT_DIR$/MpAgencjaKidoTv-Project.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libs/facebook/facebook.iml" filepath="$PROJECT_DIR$/libs/facebook/facebook.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libs/libs.iml" filepath="$PROJECT_DIR$/libs/libs.iml" />
     </modules>
   </component>
 </project>

@@ -2,7 +2,8 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true">
 
     <ImageView
         android:layout_width="match_parent"
@@ -76,4 +77,13 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/facebook_button"/>
     </RelativeLayout>
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/adver"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/adver"
+        android:contentDescription="@string/start_menu_bg_image"/>
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -20,31 +21,23 @@ import mp.agencja.apsik.kidotv.R;
 
 public class MainManuScene extends Activity {
 
-    private boolean lock = false;
     private ImageButton btnStart;
-    private ImageButton btnGoogle;
-    private ImageButton btnRate;
-    private ImageButton btnFacebook;
-    private ImageButton btnSettings;
-    private ImageButton btnFx;
-    private ImageButton btnVolume;
-    private ImageButton btnLock;
     private RelativeLayout optionsLayout;
     private boolean expanded = true;
+    private final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainmenu_scene);
         btnStart = (ImageButton) findViewById(R.id.btnStart);
-        btnGoogle = (ImageButton) findViewById(R.id.btnGoogle);
-        btnRate = (ImageButton) findViewById(R.id.btnRate);
-        btnFacebook = (ImageButton) findViewById(R.id.btnFacebook);
-        btnSettings = (ImageButton) findViewById(R.id.btnSettings);
+        ImageButton btnGoogle = (ImageButton) findViewById(R.id.btnGoogle);
+        ImageButton btnRate = (ImageButton) findViewById(R.id.btnRate);
+        ImageButton btnFacebook = (ImageButton) findViewById(R.id.btnFacebook);
+        ImageButton btnSettings = (ImageButton) findViewById(R.id.btnSettings);
 
-        btnLock = (ImageButton) findViewById(R.id.btnLock);
-        btnFx = (ImageButton) findViewById(R.id.btnFx);
-        btnVolume = (ImageButton) findViewById(R.id.btnVolume);
+        ImageButton btnFx = (ImageButton) findViewById(R.id.btnFx);
+        ImageButton btnVolume = (ImageButton) findViewById(R.id.btnVolume);
 
         btnStart.setOnTouchListener(onStartTouchListener);
         btnGoogle.setOnTouchListener(onGoogleTouchListener);
@@ -52,7 +45,6 @@ public class MainManuScene extends Activity {
         btnFacebook.setOnTouchListener(onFacebookTouchListener);
 
         btnSettings.setOnTouchListener(onSettingsTouchListener);
-        btnLock.setOnTouchListener(onLockTouchListener);
         btnFx.setOnTouchListener(onFxTouchListener);
         btnVolume.setOnTouchListener(onVolumeTouchListener);
 
@@ -108,49 +100,22 @@ public class MainManuScene extends Activity {
             return false;
         }
     };
-    private final ImageButton.OnTouchListener onLockTouchListener = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                if (isLock()) {
-                    btnLock.setImageDrawable(getResources().getDrawable(R.drawable.unlock_button));
-                    btnStart.setEnabled(false);
-                    btnGoogle.setEnabled(false);
-                    btnRate.setEnabled(false);
-                    btnFacebook.setEnabled(false);
-                    btnSettings.setEnabled(false);
-                    btnFx.setEnabled(false);
-                    btnVolume.setEnabled(false);
-                    setLock(true);
-                } else {
-                    btnLock.setImageDrawable(getResources().getDrawable(R.drawable.start_lock_button));
-                    btnStart.setEnabled(true);
-                    btnGoogle.setEnabled(true);
-                    btnRate.setEnabled(true);
-                    btnFacebook.setEnabled(true);
-                    btnSettings.setEnabled(true);
-                    btnFx.setEnabled(true);
-                    btnVolume.setEnabled(true);
-                    setLock(false);
-                }
-                scaleAnimation(1f, 0.75f, view, "none");
-            } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                scaleAnimation(0.75f, 1f, view, "none");
-            }
-            return false;
-        }
-    };
+
     private final ImageButton.OnTouchListener onFxTouchListener = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 scaleAnimation(1f, 0.75f, view, "none");
+                AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                audio.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
+                        AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "none");
             }
             return false;
         }
     };
+
     private final ImageButton.OnTouchListener onVolumeTouchListener = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -189,6 +154,7 @@ public class MainManuScene extends Activity {
             return false;
         }
     };
+
     private final ImageButton.OnTouchListener onRateTouchListener = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -200,6 +166,7 @@ public class MainManuScene extends Activity {
             return false;
         }
     };
+
     private final ImageButton.OnTouchListener onFacebookTouchListener = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -224,8 +191,8 @@ public class MainManuScene extends Activity {
             }
 
             public void onAnimationRepeat(Animation anim) {
-            }
 
+            }
             public void onAnimationEnd(Animation anim) {
                 if (action.equals("start")) {
                     final Intent intent = new Intent(MainManuScene.this, PlayListScene.class);
@@ -236,17 +203,16 @@ public class MainManuScene extends Activity {
         view.startAnimation(scaleAnimation);
     }
 
-    private boolean isLock() {
-        return !lock;
-    }
-
-    private void setLock(boolean lock) {
-        this.lock = lock;
-    }
-
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        //System.exit(0);
+        findViewById(R.id.adver).setVisibility(View.VISIBLE);
+        handler.postDelayed(runnable, 5000);
     }
+
+    private final Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            finish();
+        }
+    };
 }
