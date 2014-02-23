@@ -3,12 +3,11 @@
           package="mp.agencja.apsik.kidotv">
 
     <!--nie dawac przy aktywnosci z notyfikacja-->
+    <!--blokuje zmiane stanu wiersza listy-->
     <!--android:launchMode="singleInstance"-->
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <supports-screens
         android:largeScreens="true"
@@ -42,17 +41,14 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme"/>
         <activity
-            android:launchMode="singleInstance"
             android:name="mp.agencja.apsik.kidotv.main.YouTubePlayerScene"
             android:screenOrientation="landscape"
             android:theme="@style/Theme"/>
         <activity
-            android:launchMode="singleInstance"
             android:name="mp.agencja.apsik.kidotv.main.YoutubeOverLayScene"
             android:screenOrientation="landscape"
             android:theme="@style/ThemeOverLayYoutube"/>
         <activity
-            android:launchMode="singleInstance"
             android:name="mp.agencja.apsik.kidotv.main.FavoritePlayListScene"
             android:screenOrientation="landscape"
             android:theme="@style/Theme"/>

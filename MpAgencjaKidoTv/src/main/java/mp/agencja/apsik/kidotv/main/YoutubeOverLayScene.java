@@ -8,7 +8,9 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
@@ -30,17 +32,20 @@ public class YoutubeOverLayScene extends Activity {
     private ImageButton btnFx;
     private ImageButton btnVolume;
     private ImageButton btnBack;
-    private static SeekBar seekBar;
     private boolean lock;
+    private static boolean sceneButttonsVisible = true;
     public static final Handler handler = new Handler();
     public static final Handler handlerButtonsVisibility = new Handler();
-    private static boolean allowShowing = false;
+    public static SeekBar seekBar;
+    private boolean allowShowing = true;
     private static RelativeLayout mainLayout;
     private static TextView currentTimeTv, endTime;
     private RelativeLayout optionsLayout;
     private boolean expanded = true;
     private ImageButton btnLock;
     private ImageView randomAnimal;
+    private Button btnPrevious;
+    private Button btnNext;
     private final int[] drawable = new int[]{
             R.drawable.bear,
             R.drawable.cat
@@ -74,6 +79,9 @@ public class YoutubeOverLayScene extends Activity {
         btnPause = (Button) findViewById(R.id.btnPause);
         btnPause.setOnTouchListener(onPauseTouchListener);
 
+        btnPrevious = (Button) findViewById(R.id.previous);
+        btnNext = (Button) findViewById(R.id.next);
+
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
 
@@ -90,6 +98,8 @@ public class YoutubeOverLayScene extends Activity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             btnPause.setVisibility(View.INVISIBLE);
+            btnNext.setVisibility(View.INVISIBLE);
+            btnPrevious.setVisibility(View.INVISIBLE);
             YouTubePlayerScene.youtubePlayer.pause();
             btnPlay.setVisibility(View.VISIBLE);
             return false;
@@ -97,44 +107,94 @@ public class YoutubeOverLayScene extends Activity {
     };
 
     private Animation createAnimation() {
-        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0,
-                randomAnimal.getHeight(), randomAnimal.getHeight() * 0.25F);
-        translateAnimation.setDuration(2000);
-        translateAnimation.setInterpolator(new DecelerateInterpolator());
-        translateAnimation.setFillAfter(true);
-        return translateAnimation;
+        AnimationSet animationSet = new AnimationSet(true);
+        TranslateAnimation translateAnimationIn = new TranslateAnimation(0, 0,
+                randomAnimal.getHeight(), randomAnimal.getHeight() * 0.15F);
+        translateAnimationIn.setDuration(1000);
+        translateAnimationIn.setInterpolator(new DecelerateInterpolator());
+        translateAnimationIn.setFillAfter(true);
+
+        TranslateAnimation translateAnimationOut = new TranslateAnimation(0, 0,
+                randomAnimal.getHeight() * 0.15F, randomAnimal.getHeight());
+        translateAnimationOut.setStartOffset(4000);
+        translateAnimationOut.setDuration(1000);
+        translateAnimationOut.setInterpolator(new AccelerateInterpolator());
+        translateAnimationIn.setFillAfter(false);
+
+        animationSet.addAnimation(translateAnimationIn);
+        animationSet.addAnimation(translateAnimationOut);
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                allowShowing = true;
+                randomAnimal.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return animationSet;
     }
 
     private final ImageButton.OnTouchListener onMainLayoutTouchListener = new ImageButton.OnTouchListener() {
+
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (YouTubePlayerScene.youtubePlayer != null) {
-                if (allowShowing && YouTubePlayerScene.youtubePlayer.isPlaying()) {
+                if (YouTubePlayerScene.youtubePlayer.isPlaying()) {
                     int childcount = mainLayout.getChildCount();
                     if (!isLock()) {
-                        Random random = new Random();
-                        randomAnimal.setImageDrawable(getResources().getDrawable(drawable[random.nextInt(2)]));
-                        randomAnimal.setVisibility(View.VISIBLE);
-                        randomAnimal.startAnimation(createAnimation());
+                        if (allowShowing) {
+                            Random random = new Random();
+                            randomAnimal.setImageDrawable(getResources().getDrawable(drawable[random.nextInt(2)]));
+                            randomAnimal.setX(random.nextInt(mainLayout.getWidth() - randomAnimal.getWidth()));
+                            randomAnimal.setVisibility(View.VISIBLE);
+                            randomAnimal.startAnimation(createAnimation());
+                            allowShowing = false;
+                        }
                         findViewById(R.id.rightMenuLayout).setVisibility(View.VISIBLE);
+                        handlerButtonsVisibility.removeCallbacks(runnableVisibilityButtons);
+                        handlerButtonsVisibility.postDelayed(runnableVisibilityButtons, 5000);
                     } else {
-                        for (int i = 0; i < childcount; i++) {
-                            View v = mainLayout.getChildAt(i);
-                            assert v != null;
-                            if (v.getId() != R.id.btnPlay) {
-                                if (v.getId() != R.id.randomanimal) {
-                                    v.setVisibility(View.VISIBLE);
+                        if (sceneButttonsVisible) {
+                            sceneButttonsVisible = false;
+                            for (int i = 0; i < childcount; i++) {
+                                View v = mainLayout.getChildAt(i);
+                                assert v != null;
+                                if (v.getId() != R.id.btnPlay) {
+                                    if (v.getId() != R.id.randomanimal) {
+                                        if (v.getId() == R.id.previous && YouTubePlayerScene.youtubePlayer.hasPrevious()) {
+                                            v.setVisibility(View.VISIBLE);
+                                        } else if (v.getId() == R.id.next && YouTubePlayerScene.youtubePlayer.hasNext()) {
+                                            v.setVisibility(View.VISIBLE);
+                                        } else if (v.getId() != R.id.previous && v.getId() != R.id.next) {
+                                            v.setVisibility(View.VISIBLE);
+                                        }
+                                    }
                                 }
                             }
+                            handlerButtonsVisibility.removeCallbacks(runnableVisibilityButtons);
+                            handlerButtonsVisibility.postDelayed(runnableVisibilityButtons, 5000);
+                        } else {
+                            handlerButtonsVisibility.removeCallbacks(runnableVisibilityButtons);
+                            handlerButtonsVisibility.post(runnableVisibilityButtons);
+                            sceneButttonsVisible = true;
                         }
                     }
-                    handlerButtonsVisibility.postDelayed(runnableVisibilityButtons, 5000);
-                    allowShowing = false;
                 }
             }
             return false;
         }
     };
+
     private final ImageButton.OnTouchListener onSettingsTouchListener = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -155,6 +215,7 @@ public class YoutubeOverLayScene extends Activity {
             return false;
         }
     };
+
     private final ImageButton.OnTouchListener onLockTouchListener = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -166,19 +227,23 @@ public class YoutubeOverLayScene extends Activity {
                     optionsLayout.setVisibility(View.GONE);
                     expanded = true;
                     btnLock.setImageDrawable(getResources().getDrawable(R.drawable.unlock_button));
-                    btnBack.setEnabled(false);
-                    btnPause.setEnabled(false);
+                    btnBack.setVisibility(View.INVISIBLE);
+                    btnPause.setVisibility(View.INVISIBLE);
+                    btnNext.setVisibility(View.INVISIBLE);
+                    btnPrevious.setVisibility(View.INVISIBLE);
                     btnPlay.setEnabled(false);
-                    seekBar.setEnabled(false);
+                    seekBar.setVisibility(View.INVISIBLE);
                     btnFx.setEnabled(false);
                     btnVolume.setEnabled(false);
                     setLock(true);
                 } else {
                     btnLock.setImageDrawable(getResources().getDrawable(R.drawable.start_lock_button));
-                    btnBack.setEnabled(true);
+                    btnBack.setVisibility(View.VISIBLE);
                     btnPlay.setEnabled(true);
-                    btnPause.setEnabled(true);
-                    seekBar.setEnabled(true);
+                    btnPause.setVisibility(View.VISIBLE);
+                    seekBar.setVisibility(View.VISIBLE);
+                    btnNext.setVisibility(View.VISIBLE);
+                    btnPrevious.setVisibility(View.VISIBLE);
                     btnFx.setEnabled(true);
                     btnVolume.setEnabled(true);
                     setLock(false);
@@ -189,6 +254,7 @@ public class YoutubeOverLayScene extends Activity {
             return false;
         }
     };
+
     private final ImageButton.OnTouchListener onFxTouchListener = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -205,6 +271,7 @@ public class YoutubeOverLayScene extends Activity {
             return false;
         }
     };
+
     private final ImageButton.OnTouchListener onVolumeTouchListener = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -241,15 +308,10 @@ public class YoutubeOverLayScene extends Activity {
             handlerButtonsVisibility.postDelayed(runnableVisibilityButtons, 5000);
             YouTubePlayerScene.youtubePlayer.play();
             btnPlay.setVisibility(View.INVISIBLE);
-            allowShowingPause();
+            allowShowing = true;
             return false;
         }
     };
-
-    private void allowShowingPause() {
-        allowShowing = true;
-    }
-
 
     private final SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
@@ -260,12 +322,14 @@ public class YoutubeOverLayScene extends Activity {
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
             handlerButtonsVisibility.removeCallbacks(runnableVisibilityButtons);
+            handler.removeCallbacks(runnable);
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             YouTubePlayerScene.youtubePlayer.seekToMillis(seekBar.getProgress() * 1000);
             handlerButtonsVisibility.postDelayed(runnableVisibilityButtons, 5000);
+            handler.postDelayed(runnable, 1000);
         }
     };
 
@@ -286,6 +350,7 @@ public class YoutubeOverLayScene extends Activity {
         public void run() {
             if (YouTubePlayerScene.youtubePlayer != null) {
                 if (YouTubePlayerScene.youtubePlayer.isPlaying()) {
+                    sceneButttonsVisible = true;
                     int childcount = mainLayout.getChildCount();
                     for (int i = 0; i < childcount; i++) {
                         View view = mainLayout.getChildAt(i);
@@ -294,7 +359,6 @@ public class YoutubeOverLayScene extends Activity {
                             view.setVisibility(View.INVISIBLE);
                         }
                     }
-                    allowShowing = true;
                 }
             }
         }
@@ -349,6 +413,7 @@ public class YoutubeOverLayScene extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        YouTubePlayerScene.savelastVideo();
         finish();
         YouTubePlayerScene.activity.finish();
         handler.removeCallbacks(runnable);
@@ -369,6 +434,22 @@ public class YoutubeOverLayScene extends Activity {
             }
         } else {
             return super.dispatchKeyEvent(event);
+        }
+    }
+
+    public void onPreviusClickListenr(View view) {
+        if (YouTubePlayerScene.youtubePlayer.hasPrevious()) {
+            YouTubePlayerScene.youtubePlayer.previous();
+            handlerButtonsVisibility.removeCallbacks(runnableVisibilityButtons);
+            handlerButtonsVisibility.post(runnableVisibilityButtons);
+        }
+    }
+
+    public void onNextClickListenr(View view) {
+        if (YouTubePlayerScene.youtubePlayer.hasNext()) {
+            YouTubePlayerScene.youtubePlayer.next();
+            handlerButtonsVisibility.removeCallbacks(runnableVisibilityButtons);
+            handlerButtonsVisibility.post(runnableVisibilityButtons);
         }
     }
 }

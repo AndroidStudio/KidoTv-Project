@@ -43,6 +43,7 @@ public class PlayListScene extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playlist_scene);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         database = new Database(this);
         database.openToWrite();
 
@@ -78,7 +79,6 @@ public class PlayListScene extends Activity {
     private void checkForUpdatePlayList() {
         final Bundle bundle = getIntent().getExtras();
         if (bundle != null && bundle.containsKey("version")) {
-
             Cursor cursor = database.getAllContainers();
             List<String> used_containers = new ArrayList<String>();
             while (cursor.moveToNext()) {
@@ -197,6 +197,14 @@ public class PlayListScene extends Activity {
                 database.insertContainer("Buy premium to get more 9 screens", "true");
                 database.insertContainer("Buy premium to get more 9 screens", "true");
                 database.insertContainer("Buy premium to get more 9 screens", "true");
+
+                final SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("version", 0);
+                editor.commit();
+
+                TipDialog tipDialog = new TipDialog(this, R.style.CustomDialog);
+                tipDialog.show();
+
                 setContainers();
             }
         } catch (Exception e) {
@@ -204,8 +212,12 @@ public class PlayListScene extends Activity {
         } finally {
             cursor.close();
         }
+
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(PlayListScene.this, mainKidoList);
         viewPager.setAdapter(viewPagerAdapter);
+
+
+
     }
 
     @Override

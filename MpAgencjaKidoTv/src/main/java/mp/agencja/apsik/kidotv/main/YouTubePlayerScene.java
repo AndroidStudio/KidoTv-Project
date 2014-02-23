@@ -2,6 +2,7 @@ package mp.agencja.apsik.kidotv.main;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.google.android.youtube.player.YouTubePlayer;
@@ -10,14 +11,19 @@ import com.google.android.youtube.player.YouTubePlayerView;
 
 public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
     private YouTubePlayerView playerView;
-    public static YouTubePlayer youtubePlayer;
+    public static YouTubePlayer youtubePlayer = null;
     public static Activity activity;
-    private String play_list_id;
+    private static String play_list_id;
+    private static int videoIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Bundle bundle = getIntent().getExtras();
+        videoIndex = 0;
+        if (!PlayListScene.database.isOpen()) {
+            PlayListScene.database.openToWrite();
+        }
         if (bundle != null && bundle.containsKey("playListId")) {
             play_list_id = bundle.getString("playListId");
         }
@@ -27,7 +33,6 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
         playerView = new YouTubePlayerView(this);
         playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);
         setContentView(playerView);
-
     }
 
     @Override
@@ -45,9 +50,14 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
             youtubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
             youtubePlayer.setPlaybackEventListener(playbackEventListener);
             youtubePlayer.setPlaylistEventListener(playlistEventListener);
-            youtubePlayer.loadPlaylist(play_list_id);
+            final Cursor cursor = PlayListScene.database.getLastVideos(play_list_id);
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                youtubePlayer.loadPlaylist(play_list_id, cursor.getInt(0), cursor.getInt(1) * 1000);
+            } else {
+                youtubePlayer.loadPlaylist(play_list_id);
+            }
         }
-
     }
 
     private final YouTubePlayer.PlayerStateChangeListener playerStateChangeListener = new YouTubePlayer.PlayerStateChangeListener() {
@@ -57,8 +67,7 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
         }
 
         @Override
-        public void onLoaded(String s) {
-
+        public void onLoaded(String lastWatchedVideoId) {
         }
 
         @Override
@@ -74,7 +83,6 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
 
         @Override
         public void onVideoEnded() {
-
         }
 
         @Override
@@ -84,6 +92,7 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
             }
         }
     };
+
     private final YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {
         @Override
         public void onPlaying() {
@@ -110,20 +119,34 @@ public class YouTubePlayerScene extends YouTubeFailureRecoveryActivity {
 
         }
     };
+
     private final YouTubePlayer.PlaylistEventListener playlistEventListener = new YouTubePlayer.PlaylistEventListener() {
         @Override
         public void onPrevious() {
-
+            videoIndex--;
         }
 
         @Override
         public void onNext() {
-
+            videoIndex++;
         }
 
         @Override
         public void onPlaylistEnded() {
             youtubePlayer.loadPlaylist(play_list_id);
+            videoIndex = 0;
         }
     };
+
+    public static void savelastVideo() {
+        if (youtubePlayer != null) {
+            Cursor cursor = PlayListScene.database.getLastVideos(play_list_id);
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                PlayListScene.database.updateLastVideo(play_list_id, cursor.getInt(0) + videoIndex, YoutubeOverLayScene.seekBar.getProgress());
+            } else {
+                PlayListScene.database.insertNewVideo(play_list_id, videoIndex, YoutubeOverLayScene.seekBar.getProgress());
+            }
+        }
+    }
 }

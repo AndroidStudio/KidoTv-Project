@@ -12,6 +12,7 @@
         android:contentDescription="@string/start_menu_bg_image"/>
 
     <EditText
+        android:imeOptions="flagNoExtractUi"
         android:textColorHint="@android:color/white"
         android:textColor="@android:color/white"
         android:hint="@string/search"
@@ -20,7 +21,7 @@
         android:paddingRight="100dp"
         android:id="@+id/headerview"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/header_view_icon"/>
@@ -37,7 +38,7 @@
         android:background="@android:color/white"/>
 
     <ImageView
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/listView"
         android:layout_width="wrap_content"
@@ -47,7 +48,7 @@
 
     <LinearLayout
         android:layout_below="@id/listView"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

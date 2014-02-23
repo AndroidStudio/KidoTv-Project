@@ -85,9 +85,8 @@ class ListViewAdapter extends BaseAdapter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//            String locale = context.getResources().getConfiguration().locale.getCountry();
-//            Log.w("country", "" + locale);
-
+            //String locale = context.getResources().getConfiguration().locale.getCountry();
+            //Log.w("country", "" + locale);
         }
     }
 

@@ -41,6 +41,7 @@ class ViewPagerAdapter extends PagerAdapter {
                 Toast.makeText(context, "Buy premium", Toast.LENGTH_SHORT).show();
             }
         });
+
         this.typeface = Typeface.createFromAsset(context.getAssets(), "font.TTF");
         this.mainKidoList = mainKidoList;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

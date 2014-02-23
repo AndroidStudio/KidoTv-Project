@@ -1,7 +1,6 @@
 package mp.agencja.apsik.kidotv.main;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -30,8 +28,6 @@ import mp.agencja.apsik.kidotv.R;
 public class FavoritePlayListScene extends Activity implements AdapterView.OnItemClickListener {
     private ListViewAdapter listViewAdapter;
     private EditText headerView;
-    private InputMethodManager inputMethodManager;
-    private final StringBuilder builder = new StringBuilder();
     private Handler handler = new Handler();
     private ImageView buyPremiumScene;
 
@@ -51,9 +47,6 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
                 Toast.makeText(FavoritePlayListScene.this, "Buy premium", Toast.LENGTH_SHORT).show();
             }
         });
-
-
-        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
         backButton.setOnTouchListener(onBackTouchListener);
@@ -83,7 +76,7 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
             }
         });
         ListView listView = (ListView) findViewById(R.id.listView);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, buyPremiumScene.getDrawable().getIntrinsicHeight());
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, (int) (0.9 * buyPremiumScene.getDrawable().getIntrinsicHeight()));
         params.addRule(RelativeLayout.BELOW, headerView.getId());
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
         listView.setLayoutParams(params);

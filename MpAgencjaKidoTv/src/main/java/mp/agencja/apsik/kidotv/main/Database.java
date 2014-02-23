@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class Database {
     private static final String DATABASENAME = "KIDOTV";
-    private static final int DATABASEVERSION = 34;
+    private static final int DATABASEVERSION = 44;
     private final Context context;
 
     private SQLiteHelper sqLiteHelper;
@@ -28,6 +28,19 @@ public class Database {
             + KEY_CONTAINER_PLAYLIST_ID + " string, "
             + KEY_CONTAINER_IMAGE + " blob, "
             + KEY_IS_CONTAINER_LOCKED + " string not null);";
+
+    private static final String TABLE_VIDEOS = "lastvideo";
+    private static final String KEY_ID = "id";
+    private static final String KEY_VIDEO_PLAYLIST_ID = "video_id_playlist";
+    private static final String KEY_INDEX = "video_index";
+    private static final String KEY_CURRENT_TIME = "time";
+
+    private static final String SCRIPT_CREATE_TABLE_VIDEOS = "create table "
+            + TABLE_VIDEOS + " ("
+            + KEY_ID + " integer primary key, "
+            + KEY_VIDEO_PLAYLIST_ID + " string, "
+            + KEY_INDEX + " integer, "
+            + KEY_CURRENT_TIME + " integer);";
 
     private static final String TABLE_FAVORITES = "favorites_palylist";
     private static final String KEY_FAVORITES_ID = "id";
@@ -141,6 +154,30 @@ public class Database {
         sqLiteDatabase.delete(TABLE_FAVORITES, null, null);
     }
 
+    public Cursor getLastVideos(String play_list_id) {
+        String whereClause = KEY_VIDEO_PLAYLIST_ID + "=?";
+        return sqLiteDatabase.query(TABLE_VIDEOS, new String[]{KEY_INDEX, KEY_CURRENT_TIME},
+                whereClause, new String[]{play_list_id}, null, null, null, null);
+    }
+
+    public void updateLastVideo(String play_list_id, int lastWatchedVideoIndex, int currentTime) {
+        final ContentValues values = new ContentValues();
+        values.put(KEY_INDEX, lastWatchedVideoIndex);
+        values.put(KEY_CURRENT_TIME, currentTime);
+        final String whereClause = KEY_VIDEO_PLAYLIST_ID + "=?";
+        final String[] whereArgs = new String[]{play_list_id};
+        sqLiteDatabase.update(TABLE_VIDEOS, values, whereClause, whereArgs);
+    }
+
+    public void insertNewVideo(String play_list_id, int lastWatchedVideoIndex, int currentTime) {
+        final ContentValues values = new ContentValues();
+        values.put(KEY_VIDEO_PLAYLIST_ID, play_list_id);
+        values.put(KEY_INDEX, lastWatchedVideoIndex);
+        values.put(KEY_CURRENT_TIME, currentTime);
+        sqLiteDatabase.insert(TABLE_VIDEOS, null, values);
+
+    }
+
     private class SQLiteHelper extends SQLiteOpenHelper {
         public SQLiteHelper(Context context) {
             super(context, Database.DATABASENAME, null, Database.DATABASEVERSION);
@@ -150,12 +187,14 @@ public class Database {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SCRIPT_CREATE_TABLE_FAVORITES);
             db.execSQL(SCRIPT_CREATE_TABLE_CONTAINERS);
+            db.execSQL(SCRIPT_CREATE_TABLE_VIDEOS);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int i, int i2) {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVORITES);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTAINERS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_VIDEOS);
             onCreate(db);
         }
     }

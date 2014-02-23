@@ -1,9 +1,0 @@
-<resources>
-    <style name="Theme" parent="android:Theme.Holo.NoActionBar.Fullscreen">
-        <item name="android:windowBackground">@android:color/black</item>
-    </style>
-    <style name="ThemeOverLayYoutube" parent="android:Theme.Holo.NoActionBar.Fullscreen">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
-</resources>
