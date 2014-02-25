@@ -90,7 +90,6 @@ public class YoutubeOverLayScene extends Activity {
         endTime = (TextView) findViewById(R.id.endTime);
 
         optionsLayout = (RelativeLayout) findViewById(R.id.optionsLayout);
-
         randomAnimal = (ImageView) findViewById(R.id.randomanimal);
     }
 
@@ -106,44 +105,6 @@ public class YoutubeOverLayScene extends Activity {
         }
     };
 
-    private Animation createAnimation() {
-        AnimationSet animationSet = new AnimationSet(true);
-        TranslateAnimation translateAnimationIn = new TranslateAnimation(0, 0,
-                randomAnimal.getHeight(), randomAnimal.getHeight() * 0.15F);
-        translateAnimationIn.setDuration(1000);
-        translateAnimationIn.setInterpolator(new DecelerateInterpolator());
-        translateAnimationIn.setFillAfter(true);
-
-        TranslateAnimation translateAnimationOut = new TranslateAnimation(0, 0,
-                randomAnimal.getHeight() * 0.15F, randomAnimal.getHeight());
-        translateAnimationOut.setStartOffset(4000);
-        translateAnimationOut.setDuration(1000);
-        translateAnimationOut.setInterpolator(new AccelerateInterpolator());
-        translateAnimationIn.setFillAfter(false);
-
-        animationSet.addAnimation(translateAnimationIn);
-        animationSet.addAnimation(translateAnimationOut);
-        animationSet.setFillAfter(false);
-        animationSet.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                allowShowing = true;
-                randomAnimal.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        return animationSet;
-    }
-
     private final ImageButton.OnTouchListener onMainLayoutTouchListener = new ImageButton.OnTouchListener() {
 
         @Override
@@ -154,10 +115,51 @@ public class YoutubeOverLayScene extends Activity {
                     if (!isLock()) {
                         if (allowShowing) {
                             Random random = new Random();
+                            int direction = random.nextInt(7);
                             randomAnimal.setImageDrawable(getResources().getDrawable(drawable[random.nextInt(2)]));
-                            randomAnimal.setX(random.nextInt(mainLayout.getWidth() - randomAnimal.getWidth()));
-                            randomAnimal.setVisibility(View.VISIBLE);
-                            randomAnimal.startAnimation(createAnimation());
+                            if (direction == 0) {
+                                randomAnimal.setY(mainLayout.getHeight() - randomAnimal.getHeight());
+                                randomAnimal.setRotation(0);
+                                randomAnimal.setX(random.nextInt(mainLayout.getWidth() - randomAnimal.getWidth()));
+                                randomAnimal.setVisibility(View.VISIBLE);
+                                randomAnimal.startAnimation(createAnimation());
+                            } else if (direction == 1) {
+                                randomAnimal.setY(0);
+                                randomAnimal.setRotation(180);
+                                randomAnimal.setX(random.nextInt(mainLayout.getWidth() - randomAnimal.getWidth()));
+                                randomAnimal.setVisibility(View.VISIBLE);
+                                randomAnimal.startAnimation(createTopAnimation());
+                            } else if (direction == 2) {
+                                randomAnimal.setY(random.nextInt(mainLayout.getHeight() - randomAnimal.getHeight()));
+                                randomAnimal.setRotation(90);
+                                randomAnimal.setX(0);
+                                randomAnimal.setVisibility(View.VISIBLE);
+                                randomAnimal.startAnimation(createLeftAnimation());
+                            } else if (direction == 3) {
+                                randomAnimal.setY(random.nextInt(mainLayout.getHeight() - randomAnimal.getHeight()));
+                                randomAnimal.setRotation(-90);
+                                randomAnimal.setX(mainLayout.getWidth() - randomAnimal.getWidth());
+                                randomAnimal.setVisibility(View.VISIBLE);
+                                randomAnimal.startAnimation(createRightAnimation());
+                            } else if (direction == 4) {
+                                randomAnimal.setY(mainLayout.getHeight() - randomAnimal.getHeight());
+                                randomAnimal.setRotation(45);
+                                randomAnimal.setX(0);
+                                randomAnimal.setVisibility(View.VISIBLE);
+                                randomAnimal.startAnimation(createBottomLeftAnimation());
+                            } else if (direction == 5) {
+                                randomAnimal.setY(mainLayout.getHeight() - randomAnimal.getHeight());
+                                randomAnimal.setRotation(-45);
+                                randomAnimal.setX(mainLayout.getWidth() - randomAnimal.getWidth());
+                                randomAnimal.setVisibility(View.VISIBLE);
+                                randomAnimal.startAnimation(createBottomRightAnimation());
+                            } else if (direction == 6) {
+                                randomAnimal.setY(0);
+                                randomAnimal.setRotation(135);
+                                randomAnimal.setX(0);
+                                randomAnimal.setVisibility(View.VISIBLE);
+                                randomAnimal.startAnimation(createTopLeftAnimation());
+                            }
                             allowShowing = false;
                         }
                         findViewById(R.id.rightMenuLayout).setVisibility(View.VISIBLE);
@@ -451,5 +453,264 @@ public class YoutubeOverLayScene extends Activity {
             handlerButtonsVisibility.removeCallbacks(runnableVisibilityButtons);
             handlerButtonsVisibility.post(runnableVisibilityButtons);
         }
+    }
+
+    private Animation createAnimation() {
+        AnimationSet animationSet = new AnimationSet(true);
+        TranslateAnimation translateAnimationIn = new TranslateAnimation(0, 0,
+                randomAnimal.getHeight(), randomAnimal.getHeight() * 0.15F);
+        translateAnimationIn.setDuration(1000);
+        translateAnimationIn.setInterpolator(new DecelerateInterpolator());
+        translateAnimationIn.setFillAfter(true);
+
+        TranslateAnimation translateAnimationOut = new TranslateAnimation(0, 0,
+                randomAnimal.getHeight() * 0.15F, randomAnimal.getHeight());
+        translateAnimationOut.setStartOffset(4000);
+        translateAnimationOut.setDuration(1000);
+        translateAnimationOut.setInterpolator(new AccelerateInterpolator());
+        translateAnimationIn.setFillAfter(false);
+
+        animationSet.addAnimation(translateAnimationIn);
+        animationSet.addAnimation(translateAnimationOut);
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                allowShowing = true;
+                randomAnimal.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return animationSet;
+    }
+
+    private Animation createTopAnimation() {
+        AnimationSet animationSet = new AnimationSet(true);
+        TranslateAnimation translateAnimationIn = new TranslateAnimation(0, 0,
+                -randomAnimal.getHeight(), -randomAnimal.getHeight() * 0.15F);
+        translateAnimationIn.setDuration(1000);
+        translateAnimationIn.setInterpolator(new DecelerateInterpolator());
+        translateAnimationIn.setFillAfter(true);
+
+        TranslateAnimation translateAnimationOut = new TranslateAnimation(0, 0,
+                -randomAnimal.getHeight() * 0.15F, -randomAnimal.getHeight());
+        translateAnimationOut.setStartOffset(4000);
+        translateAnimationOut.setDuration(1000);
+        translateAnimationOut.setInterpolator(new AccelerateInterpolator());
+        translateAnimationIn.setFillAfter(false);
+
+        animationSet.addAnimation(translateAnimationIn);
+        animationSet.addAnimation(translateAnimationOut);
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                allowShowing = true;
+                randomAnimal.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return animationSet;
+    }
+
+    private Animation createLeftAnimation() {
+        AnimationSet animationSet = new AnimationSet(true);
+        TranslateAnimation translateAnimationIn = new TranslateAnimation(-randomAnimal.getWidth(), -randomAnimal.getHeight() * 0.15F, 0, 0);
+        translateAnimationIn.setDuration(1000);
+        translateAnimationIn.setInterpolator(new DecelerateInterpolator());
+        translateAnimationIn.setFillAfter(true);
+
+        TranslateAnimation translateAnimationOut = new TranslateAnimation(-randomAnimal.getHeight() * 0.15F, -randomAnimal.getWidth(), 0, 0);
+        translateAnimationOut.setStartOffset(4000);
+        translateAnimationOut.setDuration(1000);
+        translateAnimationOut.setInterpolator(new AccelerateInterpolator());
+        translateAnimationIn.setFillAfter(false);
+
+        animationSet.addAnimation(translateAnimationIn);
+        animationSet.addAnimation(translateAnimationOut);
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                allowShowing = true;
+                randomAnimal.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return animationSet;
+    }
+
+    private Animation createRightAnimation() {
+        AnimationSet animationSet = new AnimationSet(true);
+        TranslateAnimation translateAnimationIn = new TranslateAnimation(randomAnimal.getWidth(), randomAnimal.getHeight() * 0.15F, 0, 0);
+        translateAnimationIn.setDuration(1000);
+        translateAnimationIn.setInterpolator(new DecelerateInterpolator());
+        translateAnimationIn.setFillAfter(true);
+
+        TranslateAnimation translateAnimationOut = new TranslateAnimation(randomAnimal.getHeight() * 0.15F, randomAnimal.getWidth(), 0, 0);
+        translateAnimationOut.setStartOffset(4000);
+        translateAnimationOut.setDuration(1000);
+        translateAnimationOut.setInterpolator(new AccelerateInterpolator());
+        translateAnimationIn.setFillAfter(false);
+
+        animationSet.addAnimation(translateAnimationIn);
+        animationSet.addAnimation(translateAnimationOut);
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                allowShowing = true;
+                randomAnimal.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return animationSet;
+    }
+
+    private Animation createBottomLeftAnimation() {
+        AnimationSet animationSet = new AnimationSet(true);
+        TranslateAnimation translateAnimationIn = new TranslateAnimation(-randomAnimal.getWidth(), -randomAnimal.getWidth() * 0.15F, randomAnimal.getHeight(), randomAnimal.getHeight() * 0.15F);
+        translateAnimationIn.setDuration(1000);
+        translateAnimationIn.setInterpolator(new DecelerateInterpolator());
+        translateAnimationIn.setFillAfter(true);
+
+        TranslateAnimation translateAnimationOut = new TranslateAnimation(-randomAnimal.getWidth() * 0.15F, -randomAnimal.getWidth(), randomAnimal.getHeight()* 0.15F, randomAnimal.getHeight() );
+
+        translateAnimationOut.setStartOffset(4000);
+        translateAnimationOut.setDuration(1000);
+        translateAnimationOut.setInterpolator(new AccelerateInterpolator());
+        translateAnimationIn.setFillAfter(false);
+
+        animationSet.addAnimation(translateAnimationIn);
+        animationSet.addAnimation(translateAnimationOut);
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                allowShowing = true;
+                randomAnimal.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return animationSet;
+    }
+
+    private Animation createBottomRightAnimation() {
+        AnimationSet animationSet = new AnimationSet(true);
+        TranslateAnimation translateAnimationIn = new TranslateAnimation(randomAnimal.getWidth(), randomAnimal.getWidth() * 0.15F, randomAnimal.getHeight(), randomAnimal.getHeight() * 0.15F);
+        translateAnimationIn.setDuration(1000);
+        translateAnimationIn.setInterpolator(new DecelerateInterpolator());
+        translateAnimationIn.setFillAfter(true);
+
+        TranslateAnimation translateAnimationOut = new TranslateAnimation(randomAnimal.getWidth() * 0.15F, randomAnimal.getWidth(), randomAnimal.getHeight()* 0.15F, randomAnimal.getHeight() );
+
+        translateAnimationOut.setStartOffset(4000);
+        translateAnimationOut.setDuration(1000);
+        translateAnimationOut.setInterpolator(new AccelerateInterpolator());
+        translateAnimationIn.setFillAfter(false);
+
+        animationSet.addAnimation(translateAnimationIn);
+        animationSet.addAnimation(translateAnimationOut);
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                allowShowing = true;
+                randomAnimal.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return animationSet;
+    }
+
+    private Animation createTopLeftAnimation() {
+        AnimationSet animationSet = new AnimationSet(true);
+        TranslateAnimation translateAnimationIn = new TranslateAnimation(-randomAnimal.getWidth(), -randomAnimal.getWidth() * 0.15F, -randomAnimal.getHeight(), -randomAnimal.getHeight() * 0.15F);
+        translateAnimationIn.setDuration(1000);
+        translateAnimationIn.setInterpolator(new DecelerateInterpolator());
+        translateAnimationIn.setFillAfter(true);
+
+        TranslateAnimation translateAnimationOut = new TranslateAnimation(-randomAnimal.getWidth() * 0.15F, -randomAnimal.getWidth(), -randomAnimal.getHeight()* 0.15F, -randomAnimal.getHeight() );
+
+        translateAnimationOut.setStartOffset(4000);
+        translateAnimationOut.setDuration(1000);
+        translateAnimationOut.setInterpolator(new AccelerateInterpolator());
+        translateAnimationIn.setFillAfter(false);
+
+        animationSet.addAnimation(translateAnimationIn);
+        animationSet.addAnimation(translateAnimationOut);
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                allowShowing = true;
+                randomAnimal.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return animationSet;
     }
 }

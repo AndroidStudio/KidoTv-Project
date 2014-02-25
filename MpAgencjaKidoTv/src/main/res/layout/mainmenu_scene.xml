@@ -15,6 +15,14 @@
     <include layout="@layout/right_menu"/>
 
     <ImageView
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/balon_margin_top"
+        android:id="@+id/balon"
+        android:src="@drawable/balon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
         android:id="@+id/tv_image"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"

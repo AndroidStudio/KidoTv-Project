@@ -6,4 +6,7 @@
     <dimen name="thumbial_image_padding">45dp</dimen>
     <dimen name="gridView_width">850dp</dimen>
     <dimen name="progres_bar_gridView_item_margin">80dp</dimen>
+    <dimen name="balon_margin_top">50dp</dimen>
+    <dimen name="padding_gridview">100dp</dimen>
+    <dimen name="textsizetip">25dp</dimen>
 </resources>

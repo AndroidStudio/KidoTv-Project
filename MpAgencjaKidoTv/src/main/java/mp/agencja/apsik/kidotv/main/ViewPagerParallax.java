@@ -87,7 +87,7 @@ public class ViewPagerParallax extends ViewPager {
 
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
-                options.inPreferredConfig = Bitmap.Config.RGB_565;
+                //options.inPreferredConfig = Bitmap.Config.RGB_565;
                 BitmapFactory.decodeStream(is, null, options);
 
                 imageHeight = options.outHeight;

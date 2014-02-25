@@ -27,7 +27,7 @@ class ViewPagerAdapter extends PagerAdapter {
     private final LayoutInflater inflater;
     private final List<List<HashMap<String, String>>> mainKidoList;
     private BitmapCache cache;
-    private final int width;
+    public final int width;
     private final Typeface typeface;
     private Handler handler = new Handler();
     private ImageView buyPremiumScene;

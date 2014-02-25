@@ -15,6 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import mp.agencja.apsik.kidotv.R;
@@ -30,6 +31,10 @@ public class MainManuScene extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainmenu_scene);
+
+        ImageView balon = (ImageView) findViewById(R.id.balon);
+        balon.startAnimation(createBalonAnimation(balon));
+
         btnStart = (ImageButton) findViewById(R.id.btnStart);
         ImageButton btnGoogle = (ImageButton) findViewById(R.id.btnGoogle);
         ImageButton btnRate = (ImageButton) findViewById(R.id.btnRate);
@@ -80,6 +85,14 @@ public class MainManuScene extends Activity {
         findViewById(R.id.tv_image).startAnimation(animationSetLeft);
         optionsLayout = (RelativeLayout) findViewById(R.id.optionsLayout);
 
+    }
+
+    private Animation createBalonAnimation(ImageView balon) {
+        Animation translateAnimation = new TranslateAnimation(-balon.getDrawable().getIntrinsicWidth() * 2, balon.getDrawable().getIntrinsicWidth() * 2, 0, 0);
+        translateAnimation.setDuration(30000);
+        translateAnimation.setRepeatMode(Animation.REVERSE);
+        translateAnimation.setRepeatCount(Animation.INFINITE);
+        return translateAnimation;
     }
 
     private final ImageButton.OnTouchListener onSettingsTouchListener = new ImageButton.OnTouchListener() {
@@ -193,6 +206,7 @@ public class MainManuScene extends Activity {
             public void onAnimationRepeat(Animation anim) {
 
             }
+
             public void onAnimationEnd(Animation anim) {
                 if (action.equals("start")) {
                     final Intent intent = new Intent(MainManuScene.this, PlayListScene.class);

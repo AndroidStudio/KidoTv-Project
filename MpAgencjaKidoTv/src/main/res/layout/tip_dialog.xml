@@ -4,8 +4,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#7f045472"
-                android:id="@+id/tip_bear"
-    >
+                android:id="@+id/tip_bear">
+
+    <ImageView
+        android:layout_centerHorizontal="true"
+        android:id="@+id/yellow_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/yellow_arrow"/>
 
     <ImageView
         android:layout_marginRight="50dp"
@@ -14,4 +20,22 @@
         android:src="@drawable/tip_bear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <CheckBox
+            android:layout_centerInParent="true"
+            android:textSize="@dimen/textsizetip"
+            android:textColor="#08a1ce"
+            android:button="@drawable/tip_checkbox_selector"
+            android:text="@string/tip_checkBox"
+            android:id="@+id/tip_check_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
 </RelativeLayout>

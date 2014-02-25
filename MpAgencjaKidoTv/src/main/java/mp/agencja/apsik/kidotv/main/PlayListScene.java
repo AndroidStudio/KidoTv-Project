@@ -184,6 +184,13 @@ public class PlayListScene extends Activity {
                         kidoPlayList = new ArrayList<HashMap<String, String>>(4);
                     }
                 }
+                final ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(PlayListScene.this, mainKidoList);
+                viewPager.setAdapter(viewPagerAdapter);
+
+                if (sharedPreferences.getInt("show_tip", 0) == 0) {
+                    TipDialog tipDialog = new TipDialog(this, R.style.CustomDialog, viewPagerAdapter.width, sharedPreferences);
+                    tipDialog.show();
+                }
             } else {
                 database.insertContainer("Tap to add playlist", "false");
                 database.insertContainer("Tap to add playlist", "false");
@@ -202,9 +209,6 @@ public class PlayListScene extends Activity {
                 editor.putInt("version", 0);
                 editor.commit();
 
-                TipDialog tipDialog = new TipDialog(this, R.style.CustomDialog);
-                tipDialog.show();
-
                 setContainers();
             }
         } catch (Exception e) {
@@ -212,12 +216,6 @@ public class PlayListScene extends Activity {
         } finally {
             cursor.close();
         }
-
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(PlayListScene.this, mainKidoList);
-        viewPager.setAdapter(viewPagerAdapter);
-
-
-
     }
 
     @Override
@@ -232,6 +230,8 @@ public class PlayListScene extends Activity {
         }
         downloadPlayListTask = new DownloadPlayListTask(sharedPreferences, this);
         downloadPlayListTask.execute(kido_play_list_url);
+
+
     }
 
     @Override

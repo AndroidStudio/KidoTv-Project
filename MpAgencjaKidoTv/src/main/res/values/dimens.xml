@@ -11,5 +11,8 @@
     <dimen name="progres_bar_gridView_item_margin">25dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="balon_margin_top">20dp</dimen>
+    <dimen name="padding_gridview">20dp</dimen>
+    <dimen name="textsizetip">20dp</dimen>
 
 </resources>
