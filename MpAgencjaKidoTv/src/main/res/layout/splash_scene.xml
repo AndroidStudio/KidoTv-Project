@@ -5,5 +5,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scaleType="centerCrop"
-    android:src="@drawable/splash"
+    android:src="@drawable/splash_apsik"
     android:contentDescription="@string/image_splash_description"/>

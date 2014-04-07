@@ -7,8 +7,10 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/MpAgencjaKidoTv" />
+            <option value="C:\Users\Przemek\AndroidStudioProjects\MpAgencjaKidoTv-Project" />
+            <option value="C:\Users\Przemek\AndroidStudioProjects\MpAgencjaKidoTv-Project\MpAgencjaKidoTv" />
+            <option value="C:\Users\Przemek\AndroidStudioProjects\MpAgencjaKidoTv-Project\libs" />
+            <option value="C:\Users\Przemek\AndroidStudioProjects\MpAgencjaKidoTv-Project\libs\FacebookSDK_3.7" />
           </set>
         </option>
       </GradleProjectSettings>

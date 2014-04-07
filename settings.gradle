@@ -1,1 +1,1 @@
-include 'MpAgencjaKidoTv'//, ':libs:facebook'
+include 'MpAgencjaKidoTv', ':libs:FacebookSDK_3.7'

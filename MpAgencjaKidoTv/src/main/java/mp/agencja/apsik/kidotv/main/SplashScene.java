@@ -36,7 +36,7 @@ public class SplashScene extends Activity {
     private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            final Intent intent = new Intent(SplashScene.this, MainManuScene.class);
+            final Intent intent = new Intent(SplashScene.this, SplashKido.class);
             startActivity(intent);
             finish();
         }

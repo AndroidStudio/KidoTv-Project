@@ -35,7 +35,6 @@ public class PlayListScene extends Activity {
     private RelativeLayout optionsLayout;
     private boolean expanded = true;
     public static Database database;
-    private ArrayList<List<HashMap<String, String>>> mainKidoList;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -45,7 +44,12 @@ public class PlayListScene extends Activity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         database = new Database(this);
-        database.openToWrite();
+        try {
+            database.openToWrite();
+        } catch (Exception e) {
+            Log.w("Exception: ", "SQLITE EXCEPTION");
+        }
+
 
         checkForUpdatePlayList();
 
@@ -166,7 +170,7 @@ public class PlayListScene extends Activity {
         final Cursor cursor = database.getAllContainers();
         try {
             if (cursor.getCount() > 0) {
-                mainKidoList = new ArrayList<List<HashMap<String, String>>>(3);
+                ArrayList<List<HashMap<String, String>>> mainKidoList = new ArrayList<List<HashMap<String, String>>>(3);
                 ArrayList<HashMap<String, String>> kidoPlayList = new ArrayList<HashMap<String, String>>(4);
                 while (cursor.moveToNext()) {
                     String title = cursor.getString(0);
@@ -191,6 +195,36 @@ public class PlayListScene extends Activity {
                     TipDialog tipDialog = new TipDialog(this, R.style.CustomDialog, viewPagerAdapter.width, sharedPreferences);
                     tipDialog.show();
                 }
+
+//                if (sharedPreferences.getInt("show_tip", 0) == 0) {
+//                    viewPager.paint.setColorFilter(new PorterDuffColorFilter(Color.rgb(4, 84, 114), PorterDuff.Mode.MULTIPLY));
+//                    final ImageView yellow_arrow = (ImageView) findViewById(R.id.yellow_arrow);
+//                    yellow_arrow.setY(viewPagerAdapter.width / 2);
+//                    yellow_arrow.setX(yellow_arrow.getX() - viewPagerAdapter.width - yellow_arrow.getWidth());
+//                    yellow_arrow.setVisibility(View.VISIBLE);
+//                    final RelativeLayout checkBoxContainer = (RelativeLayout) findViewById(R.id.checkBoxContainer);
+//                    checkBoxContainer.setVisibility(View.VISIBLE);
+//                    final ImageView tip_bear = (ImageView) findViewById(R.id.tip_bear);
+//                    tip_bear.setVisibility(View.VISIBLE);
+//                    final CheckBox checkBox = (CheckBox) findViewById(R.id.tip_check_box);
+//                    final Typeface typeface = Typeface.createFromAsset(getAssets(), "font.TTF");
+//                    checkBox.setTypeface(typeface);
+//                    checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                        @Override
+//                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                            if (b) {
+//                                final SharedPreferences.Editor editor = sharedPreferences.edit();
+//                                editor.putInt("show_tip", 1);
+//                                editor.commit();
+//                                tip_bear.setVisibility(View.INVISIBLE);
+//                                checkBoxContainer.setVisibility(View.INVISIBLE);
+//                                yellow_arrow.setVisibility(View.INVISIBLE);
+//                                viewPager.paint.setColorFilter(null);
+//                                viewPager.invalidate();
+//                            }
+//                        }
+//                    });
+//                }
             } else {
                 database.insertContainer("Tap to add playlist", "false");
                 database.insertContainer("Tap to add playlist", "false");

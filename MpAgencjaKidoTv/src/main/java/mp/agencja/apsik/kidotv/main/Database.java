@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class Database {
     private static final String DATABASENAME = "KIDOTV";
-    private static final int DATABASEVERSION = 44;
+    private static final int DATABASEVERSION = 45;
     private final Context context;
 
     private SQLiteHelper sqLiteHelper;
