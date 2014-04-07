@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import mp.agencja.apsik.kidotv.R;
 
@@ -23,7 +24,7 @@ public class SplashKido extends Activity {
         editor.commit();
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        //Log.w("density:", "" + displayMetrics.densityDpi);
+        Log.w("density:", "" + displayMetrics.densityDpi);
     }
 
     @Override
