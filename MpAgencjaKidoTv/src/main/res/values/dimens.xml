@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="monkey_padding">10dp</dimen>
-    <dimen name="start_button_margin_bottom">40dp</dimen>
-    <dimen name="start_button_margin_top">50dp</dimen>
+    <dimen name="start_button_margin_bottom">25dp</dimen>
+    <dimen name="start_button_margin_top">65dp</dimen>
     <dimen name="start_center_menu_buttons">5dp</dimen>
     <dimen name="right_menu_buttons_margin">5dip</dimen>
     <dimen name="right_manu_margin">5dip</dimen>
@@ -14,5 +14,4 @@
     <dimen name="balon_margin_top">20dp</dimen>
     <dimen name="padding_gridview">20dp</dimen>
     <dimen name="textsizetip">20dp</dimen>
-
 </resources>

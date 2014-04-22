@@ -1,12 +1,16 @@
 package mp.agencja.apsik.kidotv.main;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,19 +42,27 @@ public class MainManuScene extends Activity {
     private RelativeLayout optionsLayout;
     private boolean expanded = true;
     private final Handler handler = new Handler();
-    private boolean canPresentShareDialog;
     private UiLifecycleHelper uiHelper;
     private int REQUEST_CODE_INTERACTIVE_POST = 2;
     private String LOG_TAG = "MainManuScene";
+    private MediaPlayer mMediaPlayer;
+    private Uri button_sound_uri;
+    private MusicService mServ = null;
+    private boolean mIsBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainmenu_scene);
 
+        doBindService();
+        startService(new Intent(this, MusicService.class));
+
+        new DownloadImageTask((ImageView) findViewById(R.id.adver))
+                .execute("http://www.androidstudio.pl/adver.png");
+
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
-        canPresentShareDialog = FacebookDialog.canPresentShareDialog(this, FacebookDialog.ShareDialogFeature.SHARE_DIALOG);
 
         ImageView sun = (ImageView) findViewById(R.id.sun);
         sun.startAnimation(createSunAnimation(sun));
@@ -111,6 +123,44 @@ public class MainManuScene extends Activity {
         findViewById(R.id.tv_image).startAnimation(animationSetLeft);
         optionsLayout = (RelativeLayout) findViewById(R.id.optionsLayout);
 
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+        button_sound_uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.button_click);
+    }
+
+    private ServiceConnection Scon = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            mServ = ((MusicService.ServiceBinder) binder).getService();
+            mServ.resumeMusic();
+        }
+
+        public void onServiceDisconnected(ComponentName name) {
+            mServ = null;
+        }
+    };
+
+    private void doBindService() {
+        bindService(new Intent(this, MusicService.class), Scon, Context.BIND_AUTO_CREATE);
+        mIsBound = true;
+    }
+
+    private void doUnbindService() {
+        if (mIsBound) {
+            unbindService(Scon);
+            mIsBound = false;
+        }
+    }
+
+    private void playSound(Uri uri) {
+        try {
+            mMediaPlayer.reset();
+            mMediaPlayer.setDataSource(this, uri);
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+        } catch (Exception e) {
+            Log.w("mMediaPlayer", "error");
+        }
     }
 
     private Animation createSunAnimation(ImageView sun) {
@@ -118,7 +168,7 @@ public class MainManuScene extends Activity {
                 sun.getDrawable().getIntrinsicWidth() / 2, sun.getDrawable().getIntrinsicWidth() / 2);
         rotateAnimation.setInterpolator(new LinearInterpolator());
         rotateAnimation.setRepeatCount(Animation.INFINITE);
-        rotateAnimation.setDuration(3000);
+        rotateAnimation.setDuration(30000);
         rotateAnimation.setRepeatMode(Animation.REVERSE);
         return rotateAnimation;
     }
@@ -138,6 +188,7 @@ public class MainManuScene extends Activity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
                 if (!expanded) {
                     optionsLayout.setVisibility(View.GONE);
@@ -157,6 +208,7 @@ public class MainManuScene extends Activity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
                 AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 audio.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
@@ -172,6 +224,7 @@ public class MainManuScene extends Activity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
                 AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
@@ -187,10 +240,10 @@ public class MainManuScene extends Activity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "start");
-
             }
             return false;
         }
@@ -199,6 +252,7 @@ public class MainManuScene extends Activity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "google");
@@ -211,6 +265,7 @@ public class MainManuScene extends Activity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "none");
@@ -223,6 +278,7 @@ public class MainManuScene extends Activity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "facebook");
@@ -250,7 +306,7 @@ public class MainManuScene extends Activity {
                 if (action.equals("start")) {
                     final Intent intent = new Intent(MainManuScene.this, PlayListScene.class);
                     MainManuScene.this.startActivity(intent);
-                }else if (action.equals("facebook")) {
+                } else if (action.equals("facebook")) {
                     setMessage();
                 } else if (action.equals("google")) {
                     int available = GooglePlayServicesUtil.isGooglePlayServicesAvailable(MainManuScene.this);
@@ -269,10 +325,20 @@ public class MainManuScene extends Activity {
     }
 
     private void setMessage() {
-        if (canPresentShareDialog) {
-            FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this).setName("Kido Tv").setDescription("Gry dla dzieci").setLink("http://www.androidstudio.pl")
-                    .setPicture("http://www.androidstudio.pl/animal_adventure.png").build();
-            uiHelper.trackPendingDialogCall(shareDialog.present());
+        if (FacebookDialog.canPresentShareDialog(this, FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
+            Session.openActiveSession(this, true, new Session.StatusCallback() {
+                @Override
+                public void call(Session session, SessionState state, Exception exception) {
+                    if (session.isOpened()) {
+                        FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(MainManuScene.this).setName("Kido TV")
+                                .setDescription("Cartoons for kids").setLink("http://www.androidstudio.pl")
+                                .setPicture("http://www.androidstudio.pl/animal_adventure.png").build();
+                        uiHelper.trackPendingDialogCall(shareDialog.present());
+                    } else {
+                        Log.e("Faceboook dialog", "No permissions");
+                    }
+                }
+            });
         } else {
             Toast.makeText(this, "Please install facebook aplication", Toast.LENGTH_LONG).show();
         }
@@ -286,7 +352,6 @@ public class MainManuScene extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_INTERACTIVE_POST) {
             if (resultCode == RESULT_OK) {
                 Log.e("succes", "Succes create google+ post");
@@ -294,7 +359,6 @@ public class MainManuScene extends Activity {
                 Log.e("error", "canceled");
             }
         }
-
         uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
             @Override
             public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
@@ -332,7 +396,6 @@ public class MainManuScene extends Activity {
     protected void onStop() {
         super.onStop();
         Log.i(LOG_TAG, "onStop");
-
     }
 
     @Override
@@ -340,10 +403,14 @@ public class MainManuScene extends Activity {
         super.onDestroy();
         uiHelper.onDestroy();
         Log.i(LOG_TAG, "onDestroy");
+        doUnbindService();
+        stopService(new Intent(this, MusicService.class));
     }
 
     @Override
     public void onBackPressed() {
+        doUnbindService();
+        stopService(new Intent(this, MusicService.class));
         findViewById(R.id.adver).setVisibility(View.VISIBLE);
         handler.postDelayed(runnable, 5000);
     }

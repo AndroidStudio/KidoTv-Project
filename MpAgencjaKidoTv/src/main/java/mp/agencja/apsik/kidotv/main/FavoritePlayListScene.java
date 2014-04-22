@@ -3,10 +3,14 @@ package mp.agencja.apsik.kidotv.main;
 import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -30,6 +34,8 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
     private EditText headerView;
     private Handler handler = new Handler();
     private ImageView buyPremiumScene;
+    private Uri button_sound_uri;
+    private MediaPlayer mMediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,7 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
         buyPremiumScene.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(button_sound_uri);
                 Toast.makeText(FavoritePlayListScene.this, "Buy premium", Toast.LENGTH_SHORT).show();
             }
         });
@@ -85,6 +92,20 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
         listViewAdapter = new ListViewAdapter(this);
         listView.setAdapter(listViewAdapter);
         listView.setOnItemClickListener(this);
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+        button_sound_uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.button_click);
+    }
+
+    private void playSound(Uri uri) {
+        try {
+            mMediaPlayer.reset();
+            mMediaPlayer.setDataSource(this, uri);
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+        } catch (Exception e) {
+            Log.w("mMediaPlayer", "error");
+        }
     }
 
     private final TextWatcher textWatcher = new TextWatcher() {
@@ -135,6 +156,7 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "showAll");
@@ -147,6 +169,7 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "favorites");
@@ -159,6 +182,7 @@ public class FavoritePlayListScene extends Activity implements AdapterView.OnIte
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                playSound(button_sound_uri);
                 scaleAnimation(1f, 0.75f, view, "none");
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 scaleAnimation(0.75f, 1f, view, "back");

@@ -1,6 +1,6 @@
 <resources>
-    <dimen name="start_button_margin_bottom">60dp</dimen>
-    <dimen name="start_button_margin_top">75dp</dimen>
+    <dimen name="start_button_margin_bottom">30dp</dimen>
+    <dimen name="start_button_margin_top">100dp</dimen>
     <dimen name="start_center_menu_buttons">5dp</dimen>
     <dimen name="right_menu_buttons_margin">7dip</dimen>
     <dimen name="right_manu_margin">7dip</dimen>

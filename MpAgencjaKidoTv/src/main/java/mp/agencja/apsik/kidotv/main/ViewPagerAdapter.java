@@ -16,7 +16,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,20 +31,20 @@ class ViewPagerAdapter extends PagerAdapter {
     private Handler handler = new Handler();
     private ImageView buyPremiumScene;
 
-    public ViewPagerAdapter(final PlayListScene context, List<List<HashMap<String, String>>> mainKidoList) {
-        this.width = context.getResources().getDrawable(R.drawable.video_thumb_unlocked).getIntrinsicWidth();
-        this.buyPremiumScene = (ImageView) context.findViewById(R.id.image_buy_premium_full_scene);
+    public ViewPagerAdapter(final PlayListScene activity, List<List<HashMap<String, String>>> mainKidoList) {
+        this.width = activity.getResources().getDrawable(R.drawable.video_thumb_unlocked).getIntrinsicWidth();
+        this.buyPremiumScene = (ImageView) activity.findViewById(R.id.image_buy_premium_full_scene);
         this.buyPremiumScene.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Buy premium", Toast.LENGTH_SHORT).show();
+                activity.buyClick();
             }
         });
 
-        this.typeface = Typeface.createFromAsset(context.getAssets(), "font.TTF");
+        this.typeface = Typeface.createFromAsset(activity.getAssets(), "font.TTF");
         this.mainKidoList = mainKidoList;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+        this.inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final int memClass = ((ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         final int cacheSize = 1024 * 1024 * memClass;
 
         final RetainCache c = RetainCache.getOrCreateRetainableCache();
@@ -54,7 +53,6 @@ class ViewPagerAdapter extends PagerAdapter {
             this.cache = new BitmapCache(cacheSize);
             c.mRetainedCache = this.cache;
         }
-
     }
 
     @Override
